@@ -1,8 +1,11 @@
 /** In this file, we create a React component which incorporates components provided by material-ui */
 
 require("babelify/polyfill");
-let React = require('react');
-let mui = require('material-ui');
+
+import converter from 'json-2-csv';
+import flat from 'flat';
+import React from 'react';
+import mui from 'material-ui';
 let FlatButton = mui.FlatButton;
 let Paper = mui.Paper;
 let Dialog = mui.Dialog;
@@ -15,12 +18,9 @@ let ListDivider = mui.ListDivider;
 
 let ResultTable = require('./ResultTable.jsx');
 
-//let mv = require('myvariant');
-let mv = require("../../../../../dist/index");
+import mv from 'myvariantjs';
+//let mv = require("../../../../../dist/index");
 //console.log(mv);
-
-import converter from 'json-2-csv';
-import flat from 'flat';
 
 const deepCopy = ( ob ) => JSON.parse(JSON.stringify( ob ));
 

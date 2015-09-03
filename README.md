@@ -3,6 +3,10 @@
 
 ### Demo web app that uses the [myvariantjs](https://github.com/larryhengl/myvariantjs) lib
 
+## Requirements
+
+This app requires that you have [node.js](https://nodejs.org) installed.
+
 ## Installation & Start
 
 ```
@@ -14,8 +18,7 @@ npm start
 
 ## Usage
 
-open browser to
-http://localhost:3000/
+open browser to [http://localhost:3000/](http://localhost:3000/)
 
 #### What are you looking?
 
