@@ -1,31 +1,32 @@
 {
-  "name": "simple-express-static-server",
-  "version": "0.0.1",
-  "description": "A very simple static file server.",
-  "main": "server.js",
-  "scripts": {
-    "start": "node server.js"
-  },
+  "name": "myvariantjs-demo",
+  "version": "0.1.0",
+  "description": "A demo app that uses the myvariantjs library",
   "repository": {
     "type": "git",
-    "url": "git://github.com/spadin/simple-express-static-server.git"
+    "url": "git+https://github.com/larryhengl/myvariantjs-demo.git"
   },
-  "author": "Sandro Padin",
-  "contributors": [
-    "Luca Capra"
-  ],
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/spadin/simple-express-static-server/issues"
+  "scripts": {
+    "start": "gulp"
   },
-  "homepage": "https://github.com/spadin/simple-express-static-server",
+  "devDependencies": {
+    "babelify": "^6.1.2",
+    "browser-sync": "^1.8.1",
+    "browserify": "^7.0.3",
+    "gulp": "^3.8.10",
+    "gulp-notify": "^2.1.0",
+    "gulp-util": "^3.0.1",
+    "pretty-hrtime": "^0.2.2",
+    "require-dir": "^0.1.0",
+    "underscore": "^1.7.0",
+    "vinyl-source-stream": "^1.0.0",
+    "watchify": "^2.2.1"
+  },
   "dependencies": {
-    "body-parser": "^1.1.2",
-    "errorhandler": "^1.0.1",
-    "express": "^4.1.2",
-    "method-override": "^1.0.0"
-  },
-  "bin": {
-    "simple-server": "./start.js"
+    "json2csv": "^2.11.0",
+    "material-ui": ">=0.8",
+    "react": ">=0.13",
+    "react-material-icons": "^1.0.1",
+    "react-tap-event-plugin": "^0.1.3"
   }
 }

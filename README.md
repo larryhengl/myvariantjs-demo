@@ -1,40 +1,42 @@
-Simple Express Static File Server
-=================================
+# MyVariantjs Demo
 
-Description
------------
 
-A very simple static file server. For development use only.
+### Demo web app that uses the [myvariantjs](https://github.com/larryhengl/myvariantjs) lib
 
-Install dependencies (first time only):
+## Installation & Start
 
-    $ npm install
+```
+git clone git@github.com:larryhengl/myvariantjs-demo.git
+cd myvariantjs-demo
+npm install
+npm start
+```
 
-How to start:
+## Usage
 
-    $ node server
+open browser to
+http://localhost:3000/
 
-Open [http://localhost:4567](http://localhost:4567)
+#### What are you looking?
 
-If you need a different port:
+This web app using the myvariantjs lib to talk to the MyVariant.info services.  There are a pre-configured set of actions to demonstrate some of the lib API.
 
-    $ PORT=9999 node server
+Click on an action, view the results.  If you see data then the lib is working.
 
-Open [http://localhost:9999](http://localhost:9999)
+You can toggle data formats and download a csv file of the results.
 
-If you need a different hostname:
+A more elaborate MyVariant viewer is coming!
 
-    $ HOSTNAME=192.168.0.1 node server
 
-Open [http://192.168.0.1:4567](http://192.168.0.1:4567)
+## Developing the demo
 
-CLI based generic server:
-----------
+The start script launches a web server and watcher, with browsersync for auto page reloads.
 
-Install as a global module
+See package.json for all the npm run scripts
 
-    $ sudo npm install -g spadin/simple-express-static-server
 
-Serve a directory
+## Ingredients
 
-    $ simple-server my/public/dir
+This app uses Reactjs & styled with Material Design.
+
+It is built with gulp & babel.
