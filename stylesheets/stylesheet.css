@@ -61,15 +61,15 @@ a {
 
 @media screen and (min-width: 64em) {
   .page-header {
-    padding: 5rem 6rem; } }
+    padding: 1rem 4rem; } }
 
 @media screen and (min-width: 42em) and (max-width: 64em) {
   .page-header {
-    padding: 3rem 4rem; } }
+    padding: 1rem 4rem; } }
 
 @media screen and (max-width: 42em) {
   .page-header {
-    padding: 2rem 1rem; } }
+    padding: 1rem 1rem; } }
 
 .project-name {
   margin-top: 0;
@@ -175,6 +175,7 @@ a {
     margin-top: 0; }
   .main-content blockquote > :last-child {
     margin-bottom: 0; }
+/*
 .main-content table {
   display: block;
   width: 100%;
@@ -186,6 +187,7 @@ a {
   .main-content table th, .main-content table td {
     padding: 0.5rem 1rem;
     border: 1px solid #e9ebec; }
+*/
 .main-content dl {
   padding: 0; }
   .main-content dl dt {
@@ -205,8 +207,8 @@ a {
 
 @media screen and (min-width: 64em) {
   .main-content {
-    max-width: 64rem;
-    padding: 2rem 6rem;
+    /* max-width: 64rem; */
+    padding: 2rem 2rem;
     margin: 0 auto;
     font-size: 1.1rem; } }
 
@@ -223,13 +225,15 @@ a {
 .site-footer {
   padding-top: 2rem;
   margin-top: 2rem;
-  border-top: solid 1px #eff0f1; }
+  border-top: solid 1px #eff0f1;
+  text-align: center; }
 
 .site-footer-owner {
   display: block;
   font-weight: bold; }
 
 .site-footer-credits {
+  font-size: 0.6rem;
   color: #819198; }
 
 @media screen and (min-width: 64em) {
