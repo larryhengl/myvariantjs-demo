@@ -1,40 +1,36 @@
-/** In this file, we create a React component which incorporates components provided by material-ui */
-
 require("babelify/polyfill");
 
-import converter from 'json-2-csv';
-import flat from 'flat';
-import React from 'react';
-import mui from 'material-ui';
+const converter = require('json-2-csv');
+const flat = require('flat');
+const React = require('react');
+const mui = require('material-ui');
+const mv = require('myvariantjs');
+
+const deepCopy = ( ob ) => JSON.parse(JSON.stringify( ob ));
+
 let FlatButton = mui.FlatButton;
+let IconButton = mui.IconButton;
 let Paper = mui.Paper;
 let Dialog = mui.Dialog;
 let ThemeManager = new mui.Styles.ThemeManager();
 let Colors = mui.Styles.Colors;
-
+let SvgIcon = mui.SvgIcon;
 let List = mui.List;
 let ListItem = mui.ListItem;
 let ListDivider = mui.ListDivider;
-
 let ResultTable = require('./ResultTable.jsx');
-
-import mv from 'myvariantjs';
-//let mv = require("../../../../../dist/index");
-//console.log(mv);
-
-const deepCopy = ( ob ) => JSON.parse(JSON.stringify( ob ));
+let HelpIcon = require('../svg-icons/help-outline.jsx');
 
 let Main = React.createClass({
 
   getInitialState(){
     return {
-      mv: mv,
       isLoading: false,
       lastAction: null,
       actions:{
-        1: {'caller':'getfields','params':null},
-        2: {'caller':'getfields','params':'gene'},
-        3: {'caller':'getvariant','params':'chr9:g.107620835G>A'},
+        "1": {'caller':'getfields','params':null, 'title2':"http://myvariant.info/v1/fields"},
+        "2": {'caller':'getfields','params':'gene', 'title2':"http://myvariant.info/v1/fields, filters for 'gene'"},
+        "3": {'caller':'getvariant','params':'chr9:g.107620835G>A', 'title2':"http://myvariant.info/v1/variant/chr9:g.107620835G>A"},
       },
       dataj: null,
       datas: [],
@@ -78,7 +74,7 @@ let Main = React.createClass({
     let self = this;
     self.setState({'isLoading':true});
 
-    let mv = self.state.mv;
+    //let mv = self.state.mv;
     let action = self.state.actions[actionN];
     let got = mv[action.caller](action.params);
     got.then(
@@ -130,6 +126,9 @@ let Main = React.createClass({
     console.log(e.target);
   },
 
+  _onHelpTap() {
+    this.refs.helpDialog.show();
+  },
 
   render() {
     const primaryColor = ThemeManager.getCurrentTheme().component.flatButton.primaryTextColor;
@@ -141,7 +140,7 @@ let Main = React.createClass({
         <div className="row">
           <div className="left col-xs-12 col-sm-4 col-md-4 col-lg-4">
 
-            <h1>Search MyVariant.info</h1>
+            <h2>Search MyVariant.info</h2>
 
             <List insetSubheader={true} subheader={"Click an Action below"}>
               <ListItem
@@ -153,9 +152,7 @@ let Main = React.createClass({
                     </div>
                     <div className="col-xs-11 col-sm-11 col-md-11 col-lg-11">
                       <span className="itemPrimaryTitle" style={{color: primaryColor}}>Get all fields</span><br/>
-                      <span className="itemSecondaryTitle title1">mv.getfields()<br/>
-                        <span className="itemSecondaryTitle title2">Hits http://myvariant.info/v1/fields</span>
-                      </span>
+                      <span className="itemSecondaryTitle title2">{this.state.actions["1"].title2}</span>
                     </div>
                   </div>
                 }
@@ -171,9 +168,7 @@ let Main = React.createClass({
                     </div>
                     <div className="col-xs-11 col-sm-11 col-md-11 col-lg-11">
                       <span className="itemPrimaryTitle" style={{color: primaryColor}}>Get field names containing "<span style={{color: secondaryColor}}>gene</span>"</span><br/>
-                      <span className="itemSecondaryTitle title1">mv.getfields('gene')<br/>
-                        <span className="itemSecondaryTitle title2">Hits http://myvariant.info/v1/fields, filters for 'gene'</span>
-                      </span>
+                      <span className="itemSecondaryTitle title2">{this.state.actions["2"].title2}</span>
                     </div>
                   </div>
                 }
@@ -191,9 +186,7 @@ let Main = React.createClass({
                     </div>
                     <div className="col-xs-11 col-sm-11 col-md-11 col-lg-11">
                       <span className="itemPrimaryTitle" style={{color: primaryColor}}>Get variant "<span style={{color: secondaryColor}}>chr9:g.107620835G>A</span>"</span><br/>
-                      <span className="itemSecondaryTitle title1">mv.getvariant('chr9:g.107620835G>A')<br/>
-                        <span className="itemSecondaryTitle title2">Hits http://myvariant.info/v1/variant/chr9:g.107620835G>A</span>
-                      </span>
+                      <span className="itemSecondaryTitle title2">{this.state.actions["3"].title2}</span>
                     </div>
                   </div>
                 }
@@ -213,6 +206,19 @@ let Main = React.createClass({
               <FlatButton data-format={"table"} ref="btnTable" label="Table" primary={true} style={{borderBottom:(this.state.dataFormat==='table' ? '2px solid '+primaryColor : 'none')}} onTouchTap={this._onFormatTap} />
 
               <FlatButton ref="btnExport" label="Export" secondary={true} onTouchTap={this._onExportTap} />
+
+              <IconButton className="btnHelp" tooltip="Help" touch={true} onTouchTap={this._onHelpTap}>
+                <HelpIcon className="faded-grey" />
+              </IconButton>
+
+              <Dialog
+                ref="helpDialog"
+                title={"Help?"}
+                actions={[{ text: 'Got it' }]}
+                >
+                there should be some info here about toggling data formats and exporting
+              </Dialog>
+
             </div>
 
             <div className="results">

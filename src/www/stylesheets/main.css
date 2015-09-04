@@ -12,7 +12,16 @@ body {
   display: none;
 }
 
-.left h1 {
+
+button.btnHelp {
+  vertical-align: bottom;
+}
+
+svg.faded-grey path {
+  fill: rgba(0, 0, 0, 0.4);
+}
+
+.left h1, .left h2 {
   margin-left: 45px;
 }
 
