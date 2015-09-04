@@ -1,9 +1,11 @@
-let React = require("react");
-let mui = require("material-ui");
+const React = require('react');
+const mui = require('material-ui');
 let ThemeManager = new mui.Styles.ThemeManager();
 let Colors = mui.Styles.Colors;
 let IconButton = mui.IconButton;
-
+let Dialog = mui.Dialog;
+let List = mui.List;
+let ListItem = mui.ListItem;
 let Table = mui.Table;
 let TableHeader = mui.TableHeader;
 let TableHeaderColumn = mui.TableHeaderColumn;
@@ -11,19 +13,27 @@ let TableRow = mui.TableRow;
 let TableRowColumn = mui.TableRowColumn;
 let TableBody = mui.TableBody;
 let TableFooter = mui.TableFooter;
-
-//import MoreVertIcon from 'react-material-icons/icons/navigation/more-vert';
-//import MoreVertIcon from 'material-ui/svg-icons/navigation/more-vert';
-//          <MoreVertIcon style={{fill:"rgba(0, 0, 0, 0.54)"}} />
-
 let SvgIcon = mui.SvgIcon;
+let MoreVertIcon = require('../svg-icons/more-vert.jsx');
 
-let MoreVertIcon = React.createClass({
-  render: function() {
+let Details = React.createClass({
+  render(){
+    let items = Object.keys(this.props.data).map( (k) => {
+        return (
+          <div className="row">
+            <div className="col-xs-6 col-sm-6 col-md-6 col-lg-6">
+              <span>{k}</span>
+            </div>
+            <div className="col-xs-6 col-sm-6 col-md-6 col-lg-6">
+              { k==='notes'? <span dangerouslySetInnerHTML={{__html: "<span>"+this.props.data[k]+"</span>"}}></span> : <span>{this.props.data[k]}</span>}
+            </div>
+          </div>
+        );
+    });
     return (
-      <SvgIcon {...this.props}>
-        <path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/>
-      </SvgIcon>
+      <div>
+        {items}
+      </div>
     );
   }
 });
@@ -42,6 +52,7 @@ let ResultTable = React.createClass({
       deselectOnClickaway: true,
       height: "300px",
       colLimit: 5,
+      moreRowNumber: 0,
     };
   },
 
@@ -62,12 +73,25 @@ let ResultTable = React.createClass({
     };
   },
 
+  _onRowSelection(rows){
+    console.log('selected',rows);
+  },
+
   _onMore(e){
-    // what row?
-    // get all cols for given row
-    // format as a List
     // push into dialog + paper, scrollable
-    console.log('more',e.currentTarget)
+    console.log('more',e.currentTarget.getAttribute('data-row'))
+    // what row?
+    let row = this.props.datas[e.currentTarget.getAttribute('data-row')];
+    // get all cols for given row, format as a List
+
+    // push data into list dialog
+
+    this.setState({moreRowNumber:row||0});
+    this.refs.moreDialog.show();
+  },
+
+  _getListData(){
+    return {'a':1,"b":2};
   },
 
   _getColumns(){
@@ -78,30 +102,32 @@ let ResultTable = React.createClass({
     let cols = this._getColumns();
     let rows = this.props.datas.map( (r,i) => {
       let row = cols.map( (c,ii) => {
+        let rowcol = c === "notes" ?
+            <TableRowColumn key={ii} dangerouslySetInnerHTML={{__html: r[c]}}></TableRowColumn> :
+            <TableRowColumn key={ii}>{r[c]}</TableRowColumn>;
         return (
-            <TableRowColumn key={ii} dangerouslySetInnerHTML={{__html: r[c]}}></TableRowColumn>
+            {rowcol}
         );
       });
       // add the More icon at end of row
       row.push(<TableRowColumn key={"colMore"} >
-          <IconButton tooltip="More" onClick={this._onMore}>
+          <IconButton
+             tooltip="More"
+             touch={true}
+             tooltipPosition="bottom-left"
+             onClick={this._onMore}
+             >
             <MoreVertIcon style={{fill:"rgba(0, 0, 0, 0.54)"}} />
           </IconButton>
         </TableRowColumn>);
-      return <TableRow key={i}>{row}</TableRow>;
+      return (
+        <TableRow rowNumber={i} key={i} onClick={this._onMore}>
+        {row}
+        </TableRow>);
     });
     return rows;
   },
-/*
-  _getRowColumns(){
-    let cols = this._getColumns().map( (c,i) => {
-        return (
-            <TableRowColumn key={"col"+i} >{c}</TableRowColumn>
-        );
-    });
-    return (<TableRow>{cols}</TableRow>);
-  },
-*/
+
   _getHeaderRow(){
     let cols = this._getColumns().map( (c,i) => {
         let col = this._toProperCase(c);
@@ -120,35 +146,47 @@ let ResultTable = React.createClass({
   render() {
     let rows = this._getTableRows();
     return (
-      <Table
-        height={this.state.height}
-        fixedHeader={this.state.fixedHeader}
-        fixedFooter={this.state.fixedFooter}
-        selectable={this.state.selectable}
-        multiSelectable={this.state.multiSelectable}
-        onRowSelection={this._onRowSelection}>
+      <div>
+        <Table
+          height={this.state.height}
+          fixedHeader={this.state.fixedHeader}
+          fixedFooter={this.state.fixedFooter}
+          selectable={this.state.selectable}
+          multiSelectable={this.state.multiSelectable}
+          onRowSelection={this._onRowSelection}>
 
-        <TableHeader enableSelectAll={this.state.enableSelectAll}>
-          <TableRow key={"sprhdrrows"}>
-            <TableHeaderColumn colSpan={this._getColumns().length+1} tooltip="Search Results" style={{textAlign: "center"}}>
-              Results ({rows.length} rows)
-            </TableHeaderColumn>
-          </TableRow>
+          <TableHeader enableSelectAll={this.state.enableSelectAll}>
+            <TableRow key={"sprhdrrows"}>
+              <TableHeaderColumn colSpan={this._getColumns().length+1} tooltip="Search Results" style={{textAlign: "center"}}>
+                Results ({rows.length} rows)
+              </TableHeaderColumn>
+            </TableRow>
 
-          {this._getHeaderRow()}
+            {this._getHeaderRow()}
 
-        </TableHeader>
+          </TableHeader>
 
-        <TableBody
-          deselectOnClickaway={this.state.deselectOnClickaway}
-          showRowHover={this.state.showRowHover}
-          stripedRows={this.state.stripedRows}>
+          <TableBody
+            deselectOnClickaway={this.state.deselectOnClickaway}
+            showRowHover={this.state.showRowHover}
+            stripedRows={this.state.stripedRows}
+            preScanRows={false}
+          >
+            {rows}
+          </TableBody>
 
-          {rows}
-
-        </TableBody>
-
-      </Table>
+        </Table>
+        <Dialog
+          ref="moreDialog"
+          title={"More details for this row"}
+          actions={[{ text: 'Got it' }]}
+          autoDetectWindowHeight={true}
+          autoScrollBodyContent={true}>
+            <div style={{height: '1000px'}}>
+              <Details data={this.props.datas[this.state.moreRowNumber]}/>
+            </div>
+        </Dialog>
+      </div>
     );
   },
 

@@ -3,6 +3,8 @@
 
 ### Demo web app that uses the [myvariantjs](https://github.com/larryhengl/myvariantjs) lib
 
+##### <span style='color:red'>This is entirely an experiment that tests the myvariantjs lib and incorparates some of the latest JS technologies: React, React Material UI, Gulp, Browserify, Babel (ES6)</span>
+
 ## Requirements
 
 This app requires that you have [node.js](https://nodejs.org) installed.

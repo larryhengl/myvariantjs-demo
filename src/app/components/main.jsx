@@ -140,7 +140,7 @@ let Main = React.createClass({
         <div className="row">
           <div className="left col-xs-12 col-sm-4 col-md-4 col-lg-4">
 
-            <h2>Search MyVariant.info</h2>
+            <h2>Search <a href="http://myvariant.info/" target="_blank">MyVariant.info</a></h2>
 
             <List insetSubheader={true} subheader={"Click an Action below"}>
               <ListItem
@@ -216,7 +216,9 @@ let Main = React.createClass({
                 title={"Help?"}
                 actions={[{ text: 'Got it' }]}
                 >
-                there should be some info here about toggling data formats and exporting
+                <p>After clicking an action at the left, a service query is made. <br/>The results will live in the panel below.</p>
+                <p>You can toggle the format of the result data: json, csv, tab-delimited (tsv), table.</p>
+                <p>The Export button will download a csv file of the results, containing all the fields fetched.</p>
               </Dialog>
 
             </div>
