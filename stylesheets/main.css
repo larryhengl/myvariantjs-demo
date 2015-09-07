@@ -12,7 +12,6 @@ body {
   display: none;
 }
 
-
 button.btnHelp {
   vertical-align: bottom;
 }
@@ -25,9 +24,10 @@ svg.faded-grey path {
   margin-left: 45px;
 }
 
-
 .mega-octicon.super-octicon {
   font-size: 48px;
+  marign-top: -20px;
+  margin-left: -10px;
 }
 
 .itemSecondaryTitle {
@@ -66,5 +66,7 @@ svg.faded-grey path {
   padding: 10px;
 }
 
-.material-icons.md-dark { color: rgba(0, 0, 0, 0.54); }
-.material-icons.md-dark.md-inactive { color: rgba(0, 0, 0, 0.26); }
+.code-view {
+  max-height: 500px;
+  overflow-y: scroll;
+}
