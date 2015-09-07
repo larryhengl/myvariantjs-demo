@@ -79,7 +79,7 @@ let ResultTable = React.createClass({
 
   _onMore(e){
     // push into dialog + paper, scrollable
-    console.log('more',e.currentTarget.getAttribute('data-row'))
+    console.log('more...',React.findDOMNode(e.currentTarget).refs)
     // what row?
     let row = this.props.datas[e.currentTarget.getAttribute('data-row')];
     // get all cols for given row, format as a List
@@ -112,6 +112,7 @@ let ResultTable = React.createClass({
       // add the More icon at end of row
       row.push(<TableRowColumn key={"colMore"} >
           <IconButton
+             ref={'rowNumber'+i}
              tooltip="More"
              touch={true}
              tooltipPosition="bottom-left"

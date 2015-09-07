@@ -45,3 +45,9 @@ See package.json for all the npm run scripts
 This app uses Reactjs & styled with Material Design.
 
 It is built with gulp & babel.
+
+## Todo
++ add more queries
++ impl export feature
++ fix tests
++ docs?

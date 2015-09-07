@@ -21,8 +21,32 @@ let ListDivider = mui.ListDivider;
 let ResultTable = require('./ResultTable.jsx');
 let HelpIcon = require('../svg-icons/help-outline.jsx');
 
-let Main = React.createClass({
+let FormatResults = React.createClass({
+  render(){
+    var comp;
+    if (this.props.format==='table') {
+      if (Array.isArray(this.props.datas) && !this.props.datas.length) {
+        comp = <div className="center-xs ">No rows.  Run a Search.</div>;
+      } else {
+        comp = <ResultTable ref="resulttable" datas={this.props.datas} format={this.props.format}/>;
+      }
+    }
+    if (this.props.format==='json') {
+      comp = <div className="code-view" ref="page"><pre class="javascript"><code>{JSON.stringify(this.props.datas,null,2)}</code></pre></div>;
+    }
+    if (['csv','tsv'].includes(this.props.format)) {
+      comp = <div className="code-view" ref="page"><span><pre><code>{this.props.datas}</code></pre></span></div>;
+    }
+    return (
+      <div>
+        {comp}
+      </div>
+    );
+  }
 
+});
+
+let Main = React.createClass({
   getInitialState(){
     return {
       isLoading: false,
@@ -31,6 +55,7 @@ let Main = React.createClass({
         "1": {'caller':'getfields','params':null, 'title2':"http://myvariant.info/v1/fields"},
         "2": {'caller':'getfields','params':'gene', 'title2':"http://myvariant.info/v1/fields, filters for 'gene'"},
         "3": {'caller':'getvariant','params':'chr9:g.107620835G>A', 'title2':"http://myvariant.info/v1/variant/chr9:g.107620835G>A"},
+        "4": {'caller':'getvariant','params':['chr9:g.107620835G>A', ["dbnsfp.genename", "cadd.phred"]], 'title2':"http://myvariant.info/v1/variant/chr9:g.107620835G>A?fields=dbnsfp.genename,cadd.phred"},
       },
       dataj: null,
       datas: [],
@@ -76,7 +101,7 @@ let Main = React.createClass({
 
     //let mv = self.state.mv;
     let action = self.state.actions[actionN];
-    let got = mv[action.caller](action.params);
+    let got = mv[action.caller](...action.params);
     got.then(
         function(res) {
           let dat = res;
@@ -99,12 +124,16 @@ let Main = React.createClass({
   },
 
   _convertFormat(format){
+    let res = this.state.dataj;
     // from * to json
     if (format === 'json') {
-      this.setState({'datas': deepCopy(this.state.dataj), 'dataFormat': format});
+      this.setState({'datas': deepCopy(res), 'dataFormat': format});
     } else {
       // flatten dataj , then pass converted form into datas
-      let dat = this.state.dataj.map( (d) => flat(d) );
+      let dat = res;
+      if (!Array.isArray(res)) dat = [res];
+      if (this.state.lastAction.caller === 'getfields') dat = this._flatten(res);
+      dat = dat.map( (d) => flat(d) );
 
       if (['table','flat'].includes(format)) {
         this.setState({datas: dat, dataFormat: format});
@@ -115,7 +144,6 @@ let Main = React.createClass({
         let opts = {'DELIMITER': {'FIELD': (format === 'tsv' ? '\t' : ',') ,WRAP: '"'}};
         converter.json2csv(dat, (err, csv) => {
             if (err) throw err;
-            console.log('j2c',csv);
             this.setState({datas: csv, dataFormat: format});
         }, opts);
       }
@@ -134,7 +162,6 @@ let Main = React.createClass({
     const primaryColor = ThemeManager.getCurrentTheme().component.flatButton.primaryTextColor;
     const secondaryColor = ThemeManager.getCurrentTheme().component.flatButton.secondaryTextColor;
     const defaultColor = "#FFFFFF";
-
     return (
       <div>
         <div className="row">
@@ -192,6 +219,41 @@ let Main = React.createClass({
                 }
                 onTouchTap={this._onListItemTap}
               />
+
+              <ListItem
+                data-action={4}
+                primaryText={
+                  <div className="row">
+                    <div className="col-xs-1 col-sm-1 col-md-1 col-lg-1">
+                      <span style={{color: this.state.lastAction==="4" ? primaryColor : defaultColor}} className="mega-octicon super-octicon octicon-chevron-right"></span>
+                    </div>
+                    <div className="col-xs-11 col-sm-11 col-md-11 col-lg-11">
+                      <span className="itemPrimaryTitle" style={{color: primaryColor}}>Get variant "<span style={{color: secondaryColor}}>chr9:g.107620835G>A</span>", only show "<span style={{color: secondaryColor}}>dbnsfp.genename</span>" and "<span style={{color: secondaryColor}}>cadd.phred</span>" fields.</span><br/>
+                      <span className="itemSecondaryTitle title2">{this.state.actions["4"].title2}</span>
+                    </div>
+                  </div>
+                }
+                onTouchTap={this._onListItemTap}
+              />
+
+              <ListDivider/>
+
+              <ListItem
+                data-action={3}
+                primaryText={
+                  <div className="row">
+                    <div className="col-xs-1 col-sm-1 col-md-1 col-lg-1">
+                      <span style={{color: this.state.lastAction==="3" ? primaryColor : defaultColor}} className="mega-octicon super-octicon octicon-chevron-right"></span>
+                    </div>
+                    <div className="col-xs-11 col-sm-11 col-md-11 col-lg-11">
+                      <span className="itemPrimaryTitle" style={{color: primaryColor}}>Get variant "<span style={{color: secondaryColor}}>chr9:g.107620835G>A</span>"</span><br/>
+                      <span className="itemSecondaryTitle title2">{this.state.actions["3"].title2}</span>
+                    </div>
+                  </div>
+                }
+                onTouchTap={this._onListItemTap}
+              />
+
             </List>
 
           </div>
@@ -224,9 +286,10 @@ let Main = React.createClass({
             </div>
 
             <div className="results">
-                { this.state.isLoading ? <div className="center-xs ">Loading...</div> :
-                    this.state.datas.length ? <ResultTable datas={this.state.datas} format={this.state.dataFormat}/> :
-                      <div className="center-xs ">No rows.  Run a Search.</div> }
+                { this.state.isLoading ?
+                    <div className="center-xs ">Loading...</div> :
+                    <FormatResults datas={this.state.datas} format={this.state.dataFormat}/>
+                }
             </div>
 
           </div>
