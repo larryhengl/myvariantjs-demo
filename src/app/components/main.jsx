@@ -26,7 +26,7 @@ let FormatResults = React.createClass({
     var comp;
     if (this.props.format==='table') {
       if (Array.isArray(this.props.datas) && !this.props.datas.length) {
-        comp = <div className="center-xs ">No rows.  Run a Search.</div>;
+        comp = <div className="center-xs ">No rows.  Run a new search.</div>;
       } else {
         comp = <ResultTable ref="resulttable" datas={this.props.datas} format={this.props.format}/>;
       }
@@ -52,10 +52,11 @@ let Main = React.createClass({
       isLoading: false,
       lastAction: null,
       actions:{
-        "1": {'caller':'getfields','params':null, 'title2':"http://myvariant.info/v1/fields"},
-        "2": {'caller':'getfields','params':'gene', 'title2':"http://myvariant.info/v1/fields, filters for 'gene'"},
-        "3": {'caller':'getvariant','params':'chr9:g.107620835G>A', 'title2':"http://myvariant.info/v1/variant/chr9:g.107620835G>A"},
-        "4": {'caller':'getvariant','params':['chr9:g.107620835G>A', ["dbnsfp.genename", "cadd.phred"]], 'title2':"http://myvariant.info/v1/variant/chr9:g.107620835G>A?fields=dbnsfp.genename,cadd.phred"},
+        "1": {'caller':'getfields','params':null, 'title2':"GET http://myvariant.info/v1/fields"},
+        "2": {'caller':'getfields','params':['gene'], 'title2':"GET http://myvariant.info/v1/fields, filters for 'gene'"},
+        "3": {'caller':'getvariant','params':['chr9:g.107620835G>A'], 'title2':"GET http://myvariant.info/v1/variant/chr9:g.107620835G>A"},
+        "4": {'caller':'getvariant','params':['chr9:g.107620835G>A', ["dbnsfp.genename", "cadd.phred"]], 'title2':"GET http://myvariant.info/v1/variant/chr9:g.107620835G>A?fields=dbnsfp.genename,cadd.phred"},
+        "5": {'caller':'getvariants','params':['chr1:g.866422C>T,chr1:g.876664G>A,chr1:g.69635G>C'], 'title2':"POST http://myvariant.info/v1/variant/"},
       },
       dataj: null,
       datas: [],
@@ -82,7 +83,6 @@ let Main = React.createClass({
     });
   },
 
-
   _onListItemTap(e) {
     this._fetchData(e.currentTarget.getAttribute("data-action"));
   },
@@ -99,15 +99,14 @@ let Main = React.createClass({
     let self = this;
     self.setState({'isLoading':true});
 
-    //let mv = self.state.mv;
     let action = self.state.actions[actionN];
-    let got = mv[action.caller](...action.params);
+    let got = action.params === null ? mv[action.caller]() : mv[action.caller](...action.params);
     got.then(
         function(res) {
           let dat = res;
           if (!Array.isArray(res)) dat = [res];
           if (action.caller === 'getfields') dat = self._flatten(res);
-          dat = dat.map( (d) => flat(d) );
+          dat = dat.map( d => flat(d) );
           self.setState({'dataj': deepCopy(res), 'datas': dat, 'isLoading':false, 'lastAction':actionN});
       })
       .catch(
@@ -141,7 +140,7 @@ let Main = React.createClass({
 
       // from json to tsv
       if (['csv','tsv'].includes(format)) {
-        let opts = {'DELIMITER': {'FIELD': (format === 'tsv' ? '\t' : ',') ,WRAP: '"'}};
+        let opts = {CHECK_SCHEMA_DIFFERENCES: false, 'DELIMITER': {'FIELD': (format === 'tsv' ? '\t' : ',') ,WRAP: '"'}};
         converter.json2csv(dat, (err, csv) => {
             if (err) throw err;
             this.setState({datas: csv, dataFormat: format});
@@ -150,8 +149,28 @@ let Main = React.createClass({
     }
   },
 
-  _onExportTap(e) {
-    console.log(e.target);
+  _onExportTap() {
+    let data = this.state.datas;
+    if (this.state.dataFormat === 'table') {
+      let opts = {CHECK_SCHEMA_DIFFERENCES: false, 'DELIMITER': {'FIELD': '\t',WRAP: '"'}};
+      converter.json2csv(this.state.datas, (err, tsv) => {
+          if (err) throw err;
+          let blob = new Blob([tsv]);
+          let url = URL.createObjectURL(blob);
+          let a = document.createElement('a');
+          a.download = "data.table";
+          a.href = url;
+          a.click();
+      }, opts);
+    } else {
+        if (this.state.dataFormat === 'json') data = JSON.stringify(this.state.datas);
+        let blob = new Blob([data]);
+        let url = URL.createObjectURL(blob);
+        let a = document.createElement('a');
+        a.download = "data."+this.state.dataFormat;
+        a.href = url;
+        a.click();
+    }
   },
 
   _onHelpTap() {
@@ -239,15 +258,15 @@ let Main = React.createClass({
               <ListDivider/>
 
               <ListItem
-                data-action={3}
+                data-action={5}
                 primaryText={
                   <div className="row">
                     <div className="col-xs-1 col-sm-1 col-md-1 col-lg-1">
-                      <span style={{color: this.state.lastAction==="3" ? primaryColor : defaultColor}} className="mega-octicon super-octicon octicon-chevron-right"></span>
+                      <span style={{color: this.state.lastAction==="5" ? primaryColor : defaultColor}} className="mega-octicon super-octicon octicon-chevron-right"></span>
                     </div>
                     <div className="col-xs-11 col-sm-11 col-md-11 col-lg-11">
-                      <span className="itemPrimaryTitle" style={{color: primaryColor}}>Get variant "<span style={{color: secondaryColor}}>chr9:g.107620835G>A</span>"</span><br/>
-                      <span className="itemSecondaryTitle title2">{this.state.actions["3"].title2}</span>
+                      <span className="itemPrimaryTitle" style={{color: primaryColor}}>Get variants "<span style={{color: secondaryColor}}>chr1:g.866422C>T</span>", "<span style={{color: secondaryColor}}>chr1:g.876664G>A</span>", "<span style={{color: secondaryColor}}>chr1:g.69635G>C</span>"</span><br/>
+                      <span className="itemSecondaryTitle title2">{this.state.actions["5"].title2}</span>
                     </div>
                   </div>
                 }
@@ -280,7 +299,7 @@ let Main = React.createClass({
                 >
                 <p>After clicking an action at the left, a service query is made. <br/>The results will live in the panel below.</p>
                 <p>You can toggle the format of the result data: json, csv, tab-delimited (tsv), table.</p>
-                <p>The Export button will download a csv file of the results, containing all the fields fetched.</p>
+                <p>The Export button will download a file of the results according to the selected format, containing all the fields fetched.</p>
               </Dialog>
 
             </div>
