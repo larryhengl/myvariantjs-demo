@@ -48,6 +48,3 @@ It is built with gulp & babel.
 
 ## Todo
 + add more queries
-+ impl export feature
-+ fix tests
-+ docs?

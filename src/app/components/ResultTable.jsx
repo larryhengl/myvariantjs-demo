@@ -77,21 +77,11 @@ let ResultTable = React.createClass({
     console.log('selected',rows);
   },
 
-  _onMore(e){
-    // push into dialog + paper, scrollable
-    console.log('more...',React.findDOMNode(e.currentTarget).refs)
-    // what row?
-    let row = this.props.datas[e.currentTarget.getAttribute('data-row')];
+  _onMore(rownum,evt){
     // get all cols for given row, format as a List
-
-    // push data into list dialog
-
-    this.setState({moreRowNumber:row||0});
+    this.setState({moreRowNumber:rownum||0});
+    // push data into list dialog and show it
     this.refs.moreDialog.show();
-  },
-
-  _getListData(){
-    return {'a':1,"b":2};
   },
 
   _getColumns(){
@@ -116,13 +106,13 @@ let ResultTable = React.createClass({
              tooltip="More"
              touch={true}
              tooltipPosition="bottom-left"
-             onClick={this._onMore}
+             onClick={this._onMore.bind(this,i)}
              >
             <MoreVertIcon style={{fill:"rgba(0, 0, 0, 0.54)"}} />
           </IconButton>
         </TableRowColumn>);
       return (
-        <TableRow rowNumber={i} key={i} onClick={this._onMore}>
+        <TableRow rowNumber={i} key={i}>
         {row}
         </TableRow>);
     });
