@@ -35,7 +35,7 @@ A more elaborate MyVariant viewer is coming!
 
 ## Developing the demo
 
-The start script launches a web server and watcher, with browsersync for auto page reloads.
+The `npm start` script launches a web server and watcher, with browsersync for auto page reloads.
 
 See package.json for all the npm run scripts
 
