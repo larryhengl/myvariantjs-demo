@@ -3,7 +3,7 @@
 
 ### Demo web app that uses the [myvariantjs](https://github.com/larryhengl/myvariantjs) lib
 
-##### <span style='color:red'>This is entirely an experiment that tests the myvariantjs lib and incorparates some of the latest JS technologies: React, React Material UI, Gulp, Browserify, Babel (ES6)</span>
+##### <span style='color:red'>This is an experiment that tests the myvariantjs lib and incorparates some of the latest JS technologies: React, React Material UI, Gulp, Browserify, Babel (ES6)</span>
 
 ## Requirements
 
@@ -22,15 +22,21 @@ npm start
 
 open browser to [http://localhost:3000/](http://localhost:3000/)
 
-#### What are you looking?
+#### What are you looking at?
 
-This web app using the myvariantjs lib to talk to the MyVariant.info services.  There are a pre-configured set of actions to demonstrate some of the lib API.
+This web app uses the myvariantjs lib to talk to the MyVariant.info services.  You can issue `search` queries, `filters` or `example` calls.
 
-Click on an action, view the results.  If you see data then the lib is working.
+*search* - feelin' lucky?  You can also scope the search query to specified fields.
 
-You can toggle data formats and download a csv file of the results.
+*filters* - look for specific fields values.
 
-A more elaborate MyVariant viewer is coming!
+*examples* - pre-configured set of actions to demonstrate some of the lib API. Click on an action, view the results.  If you see data then the lib is working.
+
+The results box shows a sampling of the actual results.
+
+You can toggle data formats and download a csv file of the entire resultset.
+
+Perhaps, a more elaborate MyVariant viewer is coming!
 
 
 ## Developing the demo

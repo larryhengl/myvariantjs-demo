@@ -12,24 +12,38 @@ body {
   display: none;
 }
 
-button.btnHelp {
-  vertical-align: bottom;
+.page-header {
+  height: 350px;
+  transition: height 500ms linear;
+}
+.page-header.short {
+  height: 115px;
+  overflow: hidden;
 }
 
-svg.faded-grey path {
-  fill: rgba(0, 0, 0, 0.4);
-}
 
+ /*--- Query -----------------*/
+
+.query.left {
+  padding-right: 30px;
+}
 .left h1, .left h2 {
   margin-left: 45px;
 }
-
+.query-tab {
+  text-transform: uppercase;
+}
+.query-tab h2 {
+  margin-top: 10px;
+}
+.query-tab:hover {
+  background-color: rgba(137, 255, 60, 0.15);
+}
 .mega-octicon.super-octicon {
   font-size: 48px;
   marign-top: -20px;
   margin-left: -10px;
 }
-
 .itemSecondaryTitle {
   font-size: 14px;
   line-height: 18px;
@@ -48,25 +62,37 @@ svg.faded-grey path {
   color: rgba(0, 0, 0, 0.54);
 }
 
+
+ /*--- Result -----------------*/
+
+button.btnHelp {
+  vertical-align: bottom;
+}
+svg.faded-grey path {
+  fill: rgba(0, 0, 0, 0.4);
+}
 .action-buttons > div {
   margin-right: 10px;
 }
 .action-buttons > div:last-child {
   margin-right: 0px;
 }
-
+.result.right {
+  padding-left: 30px;
+}
 .results {
   padding: 15px;
   border-radius: 10px;
   margin-top: 15px;
   border: 1px solid lightgrey;
 }
-
 .loading {
   padding: 10px;
 }
-
 .code-view {
   max-height: 500px;
   overflow-y: scroll;
+}
+.code-view pre {
+  margin-bottom: 0 !important;
 }

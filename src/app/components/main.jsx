@@ -1,4 +1,110 @@
 require("babelify/polyfill");
+const React = require('react');
+const mui = require('material-ui');
+const mv = require('myvariantjs');
+let ThemeManager = new mui.Styles.ThemeManager();
+let Colors = mui.Styles.Colors;
+
+let Query = require('./Query.jsx');
+let Result = require('./Result.jsx');
+
+// customize themes
+ThemeManager.setPalette({
+  accent1Color: Colors.indigo50,
+  primary1Color: "#474B4E",
+  primary2Color: "#2173B3",
+  primary3Color: "#A9D2EB",
+  accent1Color: "#ED3B3B",
+  accent2Color: "#ED2B2B",
+  accent3Color: "#F58C8C",
+  primaryTextColor: "#62CE2B",
+  secondaryTextColor: "#2679E1",
+  defaultColor: "#FFFFFF"
+});
+
+ThemeManager.setComponentThemes({
+  tabs: {
+    backgroundColor: "#FFFFFF",
+  },
+  flatButton: {
+    primaryTextColor: "#62CE2B",
+    secondaryTextColor: "#2679E1",
+  },
+  inkBar: {
+    backgroundColor: "#62CE2B",
+  },
+});
+
+
+let Main = React.createClass({
+  getInitialState(){
+    return {
+      isLoading: false,
+      data: [],
+      short: false,
+      lastAction: null,
+    };
+  },
+
+  childContextTypes: {
+    muiTheme: React.PropTypes.object,
+  },
+
+  getChildContext() {
+    return {
+      muiTheme: ThemeManager.getCurrentTheme(),
+    };
+  },
+
+  _shorten(){
+    this.setState({short:true})
+  },
+
+  _setState(data){
+    this.setState(data)
+  },
+
+  render(){
+    return (
+      <div>
+
+        <section className={"page-header"+(this.state.short ? " short" : "")}>
+          <h1 className="project-name">myvariantjs-demo</h1>
+          <h2 className="project-tagline">A demo app for myvariantjs</h2>
+          <h3 className="project-tagline">
+            <span style={{color:'#b5b5b5'}}>
+              This is an experiment that tests the myvariantjs lib and incorparates some of the latest JS technologies:
+              <br/>
+              React, React Material UI, Gulp, Browserify, Babel (ES6)</span>
+          </h3>
+          <a href="https://github.com/larryhengl/myvariantjs-demo" className="btn">View on GitHub</a>
+        </section>
+
+        <section className="main-content" onClick={this._shorten}>
+          <div className="row">
+            <h2 className="col-md-12">Search <a href="http://myvariant.info/" target="_blank">MyVariant.info</a></h2>
+            <Query _setState={this._setState} />
+            <Result isLoading={this.state.isLoading} data={this.state.data} lastAction={this.state.lastAction}/>
+          </div>
+        </section>
+
+        <section className="page-footer">
+          <footer className="site-footer">
+            <span className="site-footer-owner"><a href="https://github.com/larryhengl/myvariantjs-demo">myvariantjs-demo</a> is maintained by <a href="https://github.com/larryhengl">larryhengl</a>.</span>
+            <span className="site-footer-credits">This page is based on a generated <a href="https://pages.github.com">GitHub Page</a> / <a href="https://github.com/jasonlong/cayman-theme">Cayman theme</a> by <a href="https://twitter.com/jasonlong">Jason Long</a>.</span>
+          </footer>
+        </section>
+
+      </div>
+    )
+  }
+
+});
+
+module.exports = Main;
+
+
+/*
 
 const converter = require('json-2-csv');
 const flat = require('flat');
@@ -322,3 +428,4 @@ let Main = React.createClass({
 });
 
 module.exports = Main;
+*/
