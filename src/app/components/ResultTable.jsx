@@ -1,6 +1,6 @@
 const React = require('react');
 const mui = require('material-ui');
-let ThemeManager = new mui.Styles.ThemeManager();
+//let ThemeManager = new mui.Styles.ThemeManager();
 let Colors = mui.Styles.Colors;
 let IconButton = mui.IconButton;
 let Dialog = mui.Dialog;
@@ -59,7 +59,7 @@ let ResultTable = React.createClass({
   childContextTypes: {
     muiTheme: React.PropTypes.object,
   },
-
+/*
   componentWillMount() {
     ThemeManager.setPalette({
       primary1Color: "#62CE2B",
@@ -72,7 +72,7 @@ let ResultTable = React.createClass({
       muiTheme: ThemeManager.getCurrentTheme(),
     };
   },
-
+*/
   _onRowSelection(rows){
     console.log('selected',rows);
   },

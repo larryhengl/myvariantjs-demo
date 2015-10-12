@@ -12,8 +12,6 @@ let FlatButton = mui.FlatButton;
 let IconButton = mui.IconButton;
 let Paper = mui.Paper;
 let Dialog = mui.Dialog;
-let ThemeManager = new mui.Styles.ThemeManager();
-let Colors = mui.Styles.Colors;
 let SvgIcon = mui.SvgIcon;
 let ResultTable = require('./ResultTable.jsx');
 let HelpIcon = require('../svg-icons/help-outline.jsx');
@@ -142,8 +140,8 @@ let Result = React.createClass({
   },
 
   render() {
-    const primaryColor = this.context.muiTheme.component.flatButton.primaryTextColor;
-    const secondaryColor = this.context.muiTheme.component.flatButton.secondaryTextColor;
+    const primaryColor = this.context.muiTheme.flatButton.primaryTextColor;
+    const secondaryColor = this.context.muiTheme.flatButton.secondaryTextColor;
     const defaultColor = "#FFFFFF";
     return (
           <div className="result right col-xs-12 col-sm-8 col-md-8 col-lg-8">

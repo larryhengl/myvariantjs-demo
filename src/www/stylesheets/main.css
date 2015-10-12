@@ -12,13 +12,84 @@ body {
   display: none;
 }
 
+
+@-webkit-keyframes slideUp {
+    from {
+      height: 350px;
+      overflow: hidden;
+    }
+    to {
+      height: 115px;
+      overflow: hidden;
+    }
+}
+@-webkit-keyframes fadeOut {
+    from { opacity: 1; }
+      to { opacity: 0; }
+}
+@-webkit-keyframes fadeIn {
+    from { opacity: 0; }
+      to { opacity: 1; }
+}
+
+@keyframes slideUp {
+    from {
+      height: 350px;
+      overflow: hidden;
+    }
+    to {
+      height: 115px;
+      overflow: hidden;
+    }
+}
+@keyframes fadeOut {
+    from {
+      opacity: 1;
+      margin-top: 0px;
+    }
+    to {
+      opacity: 0;
+      margin-top: -1000px;
+    }
+}
+@keyframes fadeIn {
+    from { opacity: 0; margin-top: 0px; }
+      to { opacity: 1; margin-top: -1000px; }
+}
+
+ /*--- Header -----------------*/
+
 .page-header {
   height: 350px;
-  transition: height 500ms linear;
+  overflow: hidden;
 }
 .page-header.short {
   height: 115px;
   overflow: hidden;
+  -webkit-animation-delay: 0s;
+  -webkit-animation-duration: 0.8s;
+  -webkit-animation-name: slideUp;
+  animation-delay: 0s;
+  animation-duration: 0.8s;
+  animation-name: slideUp;
+}
+.page-header .sub1 {
+  opacity: 1;
+}
+.page-header.short .sub1 {
+  display: none;
+}
+.page-header .sub2 {
+  display: none;
+}
+.page-header .sub2 a {
+  color: lightgrey;
+}
+.page-header .sub2 a:hover {
+  color: grey;
+}
+.page-header.short .sub2 {
+  display: block;
 }
 
 

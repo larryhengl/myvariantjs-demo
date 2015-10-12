@@ -4,7 +4,6 @@ const flat = require('flat');
 const React = require('react');
 const mui = require('material-ui');
 const mv = require('myvariantjs');
-let ThemeManager = new mui.Styles.ThemeManager();
 
 const deepCopy = ( ob ) => JSON.parse(JSON.stringify( ob ));
 
@@ -43,11 +42,10 @@ let Query = React.createClass({
     muiTheme: React.PropTypes.object,
   },
   getInitialState(){
-    let muiTheme = this.context.muiTheme ? this.context.muiTheme : ThemeManager.getCurrentTheme();
     let colors = {
-        primaryColor: muiTheme.palette.primaryTextColor,
-        secondaryColor: muiTheme.palette.secondaryTextColor,
-        defaultColor: muiTheme.palette.defaultColor,
+        primaryColor: this.context.muiTheme.flatButton.primaryTextColor,
+        secondaryColor: this.context.muiTheme.flatButton.secondaryTextColor,
+        defaultColor: "#FFFFFF",
     };
     let actions = [
         {'num':'1','caller':'getfields','params':null,'title1':'Get all fields','title2':"GET http://myvariant.info/v1/fields"},
