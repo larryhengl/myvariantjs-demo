@@ -10,13 +10,6 @@ let Result = require('./Result.jsx');
 
 // customize themes
 ThemeManager.setPalette({
-  accent1Color: Colors.indigo50,
-  primary1Color: "#474B4E",
-  primary2Color: "#2173B3",
-  primary3Color: "#A9D2EB",
-  accent1Color: "#ED3B3B",
-  accent2Color: "#ED2B2B",
-  accent3Color: "#F58C8C",
   primaryTextColor: "#62CE2B",
   secondaryTextColor: "#2679E1",
   defaultColor: "#FFFFFF"
