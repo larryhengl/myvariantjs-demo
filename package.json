@@ -28,7 +28,7 @@
     "json-2-csv": "^1.4.0",
     "material-ui": ">=0.8",
     "myvariantjs": "git://github.com/larryhengl/myvariantjs.git",
-    "react": ">=0.13",
+    "react": "<0.14",
     "react-material-icons": "^1.0.1",
     "react-tap-event-plugin": "^0.1.3"
   }
