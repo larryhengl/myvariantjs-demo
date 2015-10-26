@@ -5,8 +5,7 @@ const flat = require('flat');
 const React = require('react');
 const mui = require('material-ui');
 const mv = require('myvariantjs');
-
-const deepCopy = ( ob ) => JSON.parse(JSON.stringify( ob ));
+const utils = require('../utils');
 
 let FlatButton = mui.FlatButton;
 let IconButton = mui.IconButton;
@@ -21,7 +20,7 @@ let FormatResults = React.createClass({
     var comp;
     if (this.props.format==='table') {
       if (Array.isArray(this.props.datas) && !this.props.datas.length) {
-        comp = <div className="center-xs ">No rows.  Run a new search.</div>;
+        comp = <div className="center-xs ">-- No results --<br/><br/>Run a new search.<br/>Find variants that satisfy specific field values.<br/>Or hit one of the example queries.</div>;
       } else {
         comp = <ResultTable ref="resulttable" datas={this.props.datas} format={this.props.format}/>;
       }
@@ -56,21 +55,15 @@ let Result = React.createClass({
 
   componentWillMount() {
     this.setState({
-      dataj: deepCopy(this.props.data),
-      datas: deepCopy(this.props.data),
+      dataj: utils._deepCopy(this.props.data),
+      datas: utils._deepCopy(this.props.data),
     });
   },
 
   componentWillReceiveProps(nextProps) {
     this.setState({
-      dataj: deepCopy(nextProps.data),
-      datas: deepCopy(nextProps.data),
-    });
-  },
-
-  _flatten(data){
-    return Object.keys(data).map(k => {
-      return Object.assign({'fieldname': k}, data[k]);
+      dataj: utils._deepCopy(nextProps.data),
+      datas: utils._deepCopy(nextProps.data),
     });
   },
 
@@ -88,12 +81,12 @@ let Result = React.createClass({
     let res = this.state.dataj;
     // from * to json
     if (format === 'json') {
-      this.setState({'datas': deepCopy(res), 'dataFormat': format});
+      this.setState({'datas': utils._deepCopy(res), 'dataFormat': format});
     } else {
       // flatten dataj , then pass converted form into datas
       let dat = res;
       if (!Array.isArray(res)) dat = [res];
-      if (this.props.lastAction.caller === 'getfields') dat = this._flatten(res);
+      if (this.props.lastAction.caller === 'getfields') dat = utils._flatten(res);
       dat = dat.map( (d) => flat(d) );
 
       if (['table','flat'].includes(format)) {
@@ -162,7 +155,7 @@ let Result = React.createClass({
                 ref="helpDialog"
                 title={"Help?"}
                 actions={[{ text: 'Got it' }]}
-                >
+              >
                 <p>After clicking an action at the left, a service query is made. <br/>The results will live in the panel below.</p>
                 <p>You can toggle the format of the result data: json, csv, tab-delimited (tsv), table.</p>
                 <p>The Export button will download a file of the results according to the selected format, containing all the fields fetched.</p>

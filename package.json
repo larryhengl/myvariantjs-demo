@@ -26,8 +26,8 @@
   "dependencies": {
     "flat": "^1.6.0",
     "json-2-csv": "^1.4.0",
-    "material-ui": ">=0.8",
-    "myvariantjs": "git://github.com/larryhengl/myvariantjs.git",
+    "material-ui": "^0.12.3",
+    "myvariantjs": "file:../myvariantjs",
     "react": "<0.14",
     "react-material-icons": "^1.0.1",
     "react-tap-event-plugin": "^0.1.3"

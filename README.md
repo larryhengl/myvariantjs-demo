@@ -53,4 +53,15 @@ This app uses Reactjs & styled with Material Design.
 It is built with gulp & babel.
 
 ## Todo
-+ add more queries
+ * add the follow params support:
+   - _exists_
+   - _missing_
+   - AND, OR, NOT
+   - facets
+   - sort
+   - fetch_all
+   - scroll_id
+
++ improve the querymany interface
++ add paging?
++ enable vcf parsing?

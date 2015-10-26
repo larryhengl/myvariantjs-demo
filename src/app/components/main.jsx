@@ -1,16 +1,25 @@
 require("babelify/polyfill");
 const React = require('react');
+const flat = require('flat');
 const mui = require('material-ui');
 const mv = require('myvariantjs');
+const utils = require('../utils');
+
 let Query = require('./Query.jsx');
 let Result = require('./Result.jsx');
 let ThemeManager = mui.Styles.ThemeManager;
 
+// customize theme
 let customTheme = ThemeManager.getMuiTheme(mui.Styles.LightRawTheme);
 customTheme.tabs.backgroundColor = "#FFFFFF";
 customTheme.flatButton.primaryTextColor = "#62CE2B";
 customTheme.flatButton.secondaryTextColor = "#2679E1";
 customTheme.inkBar.backgroundColor = "#62CE2B";
+
+customTheme.textField.floatingLabelColor = "#2679E1";
+customTheme.textField.focusColor = "#2679E1";
+customTheme.textField.borderColor = "#2679E1";
+
 
 let Main = React.createClass({
   childContextTypes: {
@@ -25,11 +34,33 @@ let Main = React.createClass({
 
   getInitialState(){
     return {
+      short: false,
       isLoading: false,
       data: [],
-      short: false,
+      fields: [],
       lastAction: null,
+      activeTab: 'examples',  // 'search','find','examples'
     };
+  },
+
+  componentWillMount() {
+    // prefetch the fields from myvariant
+    let self = this;
+    let action = {'caller':'getfields','params':null};
+    let got = action.params === null ? mv[action.caller]() : mv[action.caller](...action.params);
+    got.then(
+        function(res) {
+          let dat = res;
+          if (!Array.isArray(res)) dat = [res];
+          dat = utils._flatten(res);
+          dat = dat.map( d => flat(d) );
+          self.setState({fields:dat});
+      })
+      .catch(
+        function(reason) {
+          console.log('All manner of chaos ensued.  Data could not be fetched, for this reason: '+reason);
+          //self.setState({data:[]});
+      });
   },
 
   _shorten(){
@@ -38,6 +69,10 @@ let Main = React.createClass({
 
   _setState(data){
     this.setState(data)
+  },
+
+  _setTab(t){
+    this.setState({activeTab:t})
   },
 
   render(){
@@ -63,8 +98,18 @@ let Main = React.createClass({
 
         <section className="main-content" onClick={this._shorten}>
           <div className="row">
-            <Query _setState={this._setState} />
-            <Result isLoading={this.state.isLoading} data={this.state.data} lastAction={this.state.lastAction}/>
+
+            <Query
+              _setState={this._setState}
+              fields={this.state.fields}
+              activeTab={this.state.activeTab}
+              _setTab={this._setTab} />
+
+            <Result
+              isLoading={this.state.isLoading}
+              data={this.state.data}
+              lastAction={this.state.lastAction} />
+
           </div>
         </section>
 

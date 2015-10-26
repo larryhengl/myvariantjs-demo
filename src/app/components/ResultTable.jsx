@@ -1,6 +1,7 @@
 const React = require('react');
 const mui = require('material-ui');
-//let ThemeManager = new mui.Styles.ThemeManager();
+const utils = require('../utils');
+
 let Colors = mui.Styles.Colors;
 let IconButton = mui.IconButton;
 let Dialog = mui.Dialog;
@@ -59,20 +60,7 @@ let ResultTable = React.createClass({
   childContextTypes: {
     muiTheme: React.PropTypes.object,
   },
-/*
-  componentWillMount() {
-    ThemeManager.setPalette({
-      primary1Color: "#62CE2B",
-      secondary1Color: "#2679E1",
-    });
-  },
 
-  getChildContext() {
-    return {
-      muiTheme: ThemeManager.getCurrentTheme(),
-    };
-  },
-*/
   _onRowSelection(rows){
     console.log('selected',rows);
   },
@@ -121,17 +109,13 @@ let ResultTable = React.createClass({
 
   _getHeaderRow(){
     let cols = this._getColumns().map( (c,i) => {
-        let col = this._toProperCase(c);
+        let col = utils._toProperCase(c);
         return (
             <TableHeaderColumn key={"hdrcol"+i} tooltip={col} >{col}</TableHeaderColumn>
         );
     });
     cols.push(<TableHeaderColumn style={{color:"rgba(0, 0, 0, 0.26)"}} key={"hdrMore"} >{"(more)"}</TableHeaderColumn>);
     return (<TableRow key={"hdrrows"}>{cols}</TableRow>);
-  },
-
-  _toProperCase(str){
-    return str.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
   },
 
   render() {
