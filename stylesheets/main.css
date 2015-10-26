@@ -2,34 +2,184 @@ html {
   font-family: 'Roboto', sans-serif;
   min-width: 1000px;
 }
-
 body {
   font-size: 13px;
   line-height: 20px;
 }
-
 .hidey {
   display: none;
 }
 
-button.btnHelp {
-  vertical-align: bottom;
+
+@-webkit-keyframes slideUp,
+@keyframes slideUp {
+    from {
+      height: 350px;
+      overflow: hidden;
+    }
+    to {
+      height: 115px;
+      overflow: hidden;
+    }
+}
+@-webkit-keyframes shrink,
+@keyframes shrink {
+    from {
+      height: 115px;
+      overflow: hidden;
+    }
+    to {
+      height: 0px;
+      overflow: hidden;
+    }
+}
+@-webkit-keyframes show,
+@keyframes show {
+    from { height: 0px; }
+    to { height: 100px; }
+}
+@-webkit-keyframes fadeOut,
+@keyframes fadeOut {
+    from { opacity: 1; }
+    to { opacity: 0; }
+}
+@-webkit-keyframes fadeIn,
+@keyframes fadeIn {
+    from { opacity: 0; }
+      to { opacity: 1; }
 }
 
-svg.faded-grey path {
-  fill: rgba(0, 0, 0, 0.4);
+ /*--- Header -----------------*/
+
+.page-header {
+  height: 350px;
+  overflow: hidden;
+}
+.page-header.short {
+  height: 115px;
+  overflow: hidden;
+  -webkit-animation-delay: 0s;
+  -webkit-animation-name: slideUp 0.8s;
+  animation-delay: 0s;
+  animation-name: slideUp 0.8s;
+}
+.page-header .sub1 {
+  opacity: 1;
+}
+.page-header.short .sub1 {
+  /* display: none; */
+  -webkit-animation-delay: 0.5s;
+  -webkit-animation-name: fadeOut 0.8s, shrink 0.8s;
+  animation-delay: 0.5s;
+  animation-name: fadeOut 0.8s, shrink 0.8s;
+}
+.page-header .sub2 {
+  /* display: none; */
+  height: 0;
+  opacity: 0;
+}
+.page-header.short .sub2 {
+  /* display: block; */
+  height: 100px;
+  opacity: 1;
+  -webkit-animation-delay: 0s;
+  -webkit-animation-name: fadeIn 0.8, show 0.8s;
+  animation-delay: 0s;
+  animation-name: fadeIn 0.8, show 0.8s;
+}
+.page-header .sub2 a {
+  color: lightgrey;
+}
+.page-header .sub2 a:hover {
+  text-decoration: none;
+  color: #fff;
+  text-shadow:
+    -1px -1px 0 #00f,
+    1px -1px 0 #00f,
+    -1px 1px 0 #00f,
+    1px 1px 0 #00f;
 }
 
+
+ /* --- Query --- */
+
+.query.left {
+  padding-right: 30px;
+}
 .left h1, .left h2 {
   margin-left: 45px;
 }
-
+.query-tab {
+  text-transform: uppercase;
+}
+.query-tab h2 {
+  margin-top: 10px;
+}
+.query-tab:hover {
+  background-color: rgba(137, 255, 60, 0.15);
+}
 .mega-octicon.super-octicon {
   font-size: 48px;
   marign-top: -20px;
   margin-left: -10px;
 }
 
+
+.btnAdd {
+  padding: 0 !important;
+  margin: 20px 0 0 0 !important;
+  z-index: 5;
+}
+.btnAdd:hover {
+  background-color: rgba(137, 255, 60, 0.15) !important;
+}
+.btnAdd span {
+  color: rgba(0, 0, 0, 0.4);
+}
+.btnSubmit {
+  margin-top: 30px !important;
+  margin-left: 30% !important;
+}
+
+/* -- Search --- */
+
+.searchInputField {
+  display: flex;
+}
+.searchInputField span {
+  flex: 43%;
+  margin-right: 5px;
+}
+.searchInputField .minus {
+  flex: 4%;
+  margin-right: 1px;
+  margin-top: 9%;
+}
+.searchInputField .minus:hover path{
+  cursor: pointer;
+  fill: rgba(189, 8, 8, 0.87);
+}
+
+/* -- Find Many --- */
+
+.findInputField {
+  display: flex;
+}
+.findInputField span {
+  flex: 90%;
+  margin-right: 5px;
+}
+.findInputField .minus {
+  flex: 5%;
+  margin-right: 1px;
+  margin-top: 9%;
+}
+.findInputField .minus:hover path{
+  cursor: pointer;
+  fill: rgba(189, 8, 8, 0.87);
+}
+
+/* -- Examples --- */
 .itemSecondaryTitle {
   font-size: 14px;
   line-height: 18px;
@@ -48,25 +198,37 @@ svg.faded-grey path {
   color: rgba(0, 0, 0, 0.54);
 }
 
+
+ /*--- Result -----------------*/
+
+button.btnHelp {
+  vertical-align: bottom;
+}
+svg.faded-grey path {
+  fill: rgba(0, 0, 0, 0.4);
+}
 .action-buttons > div {
   margin-right: 10px;
 }
 .action-buttons > div:last-child {
   margin-right: 0px;
 }
-
+.result.right {
+  padding-left: 30px;
+}
 .results {
   padding: 15px;
   border-radius: 10px;
   margin-top: 15px;
   border: 1px solid lightgrey;
 }
-
 .loading {
   padding: 10px;
 }
-
 .code-view {
   max-height: 500px;
   overflow-y: scroll;
+}
+.code-view pre {
+  margin-bottom: 0 !important;
 }
