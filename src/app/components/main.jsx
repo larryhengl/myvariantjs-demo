@@ -12,6 +12,7 @@ let ThemeManager = mui.Styles.ThemeManager;
 // customize theme
 let customTheme = ThemeManager.getMuiTheme(mui.Styles.LightRawTheme);
 customTheme.tabs.backgroundColor = "#FFFFFF";
+customTheme.raisedButton.primaryColor = "#62CE2B";
 customTheme.flatButton.primaryTextColor = "#62CE2B";
 customTheme.flatButton.secondaryTextColor = "#2679E1";
 customTheme.inkBar.backgroundColor = "#62CE2B";
@@ -33,13 +34,29 @@ let Main = React.createClass({
   },
 
   getInitialState(){
+    let colors = {
+        primaryColor: customTheme.flatButton.primaryTextColor,
+        secondaryColor: customTheme.flatButton.secondaryTextColor,
+        defaultColor: "#FFFFFF",
+    };
+    let actions = [
+        {'num':'0','caller':'getfields','params':null,'title1':'Get all fields','title2':"GET http://myvariant.info/v1/metadata/fields"},
+        {'num':'1','caller':'getfields','params':['gene'],'title1':"Get field names containing <span style='color: " + colors.secondaryColor + ";'>gene</span>",'title2':"GET http://myvariant.info/v1/metadata/fields, filters for 'gene'"},
+        {'num':'2','caller':'getvariant','params':['chr9:g.107620835G>A'],'title1':"Get variant <span style='color: " + colors.secondaryColor + ";'>chr9:g.107620835G>A</span>",'title2':"GET http://myvariant.info/v1/variant/chr9:g.107620835G>A"},
+        {'num':'3','caller':'getvariant','params':['chr9:g.107620835G>A', ["dbnsfp.genename", "cadd.phred"]],'title1':"Get variant <span style='color: " + colors.secondaryColor + ";'>chr9:g.107620835G>A</span>, only show <span style='color: " + colors.secondaryColor + ";'>dbnsfp.genename</span> and <span style='color: " + colors.secondaryColor + ";'>cadd.phred</span> fields.",'title2':"GET http://myvariant.info/v1/variant/chr9:g.107620835G>A?fields=dbnsfp.genename,cadd.phred"},
+        {'num':'4','caller':'getvariants','params':['chr1:g.866422C>T,chr1:g.876664G>A,chr1:g.69635G>C'],'title1':"Get variants <span style='color: " + colors.secondaryColor + ";'>chr1:g.866422C>T</span>, <span style='color: " + colors.secondaryColor + ";'>chr1:g.876664G>A</span>, <span style='color: " + colors.secondaryColor + ";'>chr1:g.69635G>C</span>",'title2':"POST http://myvariant.info/v1/variant/"},
+        {'num':'5','caller':'query','params':['chr1:69000-70000'],'title1':"Get variants for genomic range <span style='color: " + colors.secondaryColor + ";'>chr1:69000-70000</span>",'title2':"GET http://myvariant.info/v1/query?q=chr1:69000-70000"},
+        {'num':'6','caller':'query','params':['dbsnp.vartype:snp'],'title1':"Get variants for matching value on a specific field <span style='color: " + colors.secondaryColor + ";'>dbsnp.vartype:snp</span>",'title2':"GET http://myvariant.info/v1/query?q=dbsnp.vartype:snp"},
+    ];
     return {
+      colors: colors,
+      actions: actions,
       short: false,
       isLoading: false,
       data: [],
       fields: [],
       lastAction: null,
-      activeTab: 'examples',  // 'search','find','examples'
+      activeTab: 'search',  // 'search','find','examples'
     };
   },
 
@@ -81,14 +98,14 @@ let Main = React.createClass({
 
         <section className={"page-header"+(this.state.short ? " short" : "")}>
           <section className="sub1">
-            <h1 className="project-name">myvariantjs-demo</h1>
-            <h2 className="project-tagline">A demo app for myvariantjs</h2>
-            <h3 className="project-tagline">
+            <h1 className="project-name">myvariantjs</h1>
+            <h2 className="project-name project-tagline">A UI to Search <a href="http://myvariant.info/" target="_blank">MyVariant.info</a></h2>
+            <h5 className="project-tagline">
               <span style={{color:'#b5b5b5'}}>
                 This is an experiment that tests the myvariantjs lib and incorparates some of the latest JS technologies:
                 <br/>
                 React, React Material UI, Gulp, Browserify, Babel (ES6)</span>
-            </h3>
+            </h5>
             <a href="https://github.com/larryhengl/myvariantjs-demo" className="btn">View on GitHub</a>
           </section>
           <section className="sub2">
@@ -96,10 +113,13 @@ let Main = React.createClass({
           </section>
         </section>
 
-        <section className="main-content" onClick={this._shorten}>
+        {/*<section className="main-content" onClick={this._shorten}>*/}
+        <section className="main-content">
           <div className="row">
 
             <Query
+              colors={this.state.colors}
+              actions={this.state.actions}
               _setState={this._setState}
               fields={this.state.fields}
               activeTab={this.state.activeTab}
@@ -108,6 +128,7 @@ let Main = React.createClass({
             <Result
               isLoading={this.state.isLoading}
               data={this.state.data}
+              actions={this.state.actions}
               lastAction={this.state.lastAction} />
 
           </div>

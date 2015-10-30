@@ -22,6 +22,7 @@ let FormatResults = React.createClass({
       if (Array.isArray(this.props.datas) && !this.props.datas.length) {
         comp = <div className="center-xs ">-- No results --<br/><br/>Run a new search.<br/>Find variants that satisfy specific field values.<br/>Or hit one of the example queries.</div>;
       } else {
+        // chop to 7 rows for preview
         comp = <ResultTable ref="resulttable" datas={this.props.datas} format={this.props.format}/>;
       }
     }
@@ -47,8 +48,9 @@ let Result = React.createClass({
 
   getInitialState(){
     return {
-      dataj: null,
-      datas: null,
+      dataj: null,    // original json formatted results
+      datas: null,    // converted format according to dataFormat
+      limit: 7,
       dataFormat: 'table',  // can be json, csv, tsv, table (default)
     };
   },
@@ -56,14 +58,14 @@ let Result = React.createClass({
   componentWillMount() {
     this.setState({
       dataj: utils._deepCopy(this.props.data),
-      datas: utils._deepCopy(this.props.data),
+      datas: utils._deepCopy(this.props.data.slice(0,this.state.limit)),
     });
   },
 
   componentWillReceiveProps(nextProps) {
     this.setState({
       dataj: utils._deepCopy(nextProps.data),
-      datas: utils._deepCopy(nextProps.data),
+      datas: utils._deepCopy(nextProps.data.slice(0,this.state.limit)),
     });
   },
 
@@ -78,19 +80,37 @@ let Result = React.createClass({
       this.setState({dataFormat: format});
       return;
     }
+    this._conversion(format, 'preview', (data) => this.setState(data))
+  },
+
+  _conversion(format, dest, cb){
     let res = this.state.dataj;
+    let dat;
+    let ret;
+    let isPreview = (dest === 'preview');
+    let calledGetFields = ((typeof this.props.lastAction === "string" ? this.props.actions[this.props.lastAction].caller : this.props.lastAction.caller) === 'getfields');
     // from * to json
     if (format === 'json') {
-      this.setState({'datas': utils._deepCopy(res), 'dataFormat': format});
+      if (calledGetFields) {
+        dat = utils._flatten(res);
+      } else {
+        dat = isPreview ? res.slice(0,this.state.limit) : res;
+      }
+      // call setState for preview or export click for export
+      cb(isPreview ? {'datas': utils._deepCopy(dat), 'dataFormat': format} : dat);
     } else {
       // flatten dataj , then pass converted form into datas
-      let dat = res;
       if (!Array.isArray(res)) dat = [res];
-      if (this.props.lastAction.caller === 'getfields') dat = utils._flatten(res);
+      if (calledGetFields) {
+        dat = utils._flatten(res);
+      } else {
+        dat = isPreview ? res.slice(0,this.state.limit) : res;
+      }
       dat = dat.map( (d) => flat(d) );
 
       if (['table','flat'].includes(format)) {
-        this.setState({datas: dat, dataFormat: format});
+        // call setState for preview or export click for export
+        cb(isPreview ? {datas: dat, dataFormat: format} : dat);
       };
 
       // from json to tsv
@@ -98,33 +118,36 @@ let Result = React.createClass({
         let opts = {CHECK_SCHEMA_DIFFERENCES: false, 'DELIMITER': {'FIELD': (format === 'tsv' ? '\t' : ',') ,WRAP: '"'}};
         converter.json2csv(dat, (err, csv) => {
             if (err) throw err;
-            this.setState({datas: csv, dataFormat: format});
+            // call setState for preview or export click for export
+            cb(isPreview ? {datas: csv, dataFormat: format} : csv);
         }, opts);
       }
     }
   },
 
   _onExportTap() {
-    let data = this.state.datas;
-    if (this.state.dataFormat === 'table') {
-      let opts = {CHECK_SCHEMA_DIFFERENCES: false, 'DELIMITER': {'FIELD': '\t',WRAP: '"'}};
-      converter.json2csv(this.state.datas, (err, tsv) => {
-          if (err) throw err;
-          let blob = new Blob([tsv]);
-          let url = URL.createObjectURL(blob);
-          let a = document.createElement('a');
-          a.download = "data.table";
-          a.href = url;
-          a.click();
-      }, opts);
-    } else {
-        if (this.state.dataFormat === 'json') data = JSON.stringify(this.state.datas);
+
+    let cb = (data) => {
         let blob = new Blob([data]);
         let url = URL.createObjectURL(blob);
         let a = document.createElement('a');
         a.download = "data."+this.state.dataFormat;
         a.href = url;
         a.click();
+    };
+
+    if (this.state.dataFormat === 'table') {
+      let opts = {CHECK_SCHEMA_DIFFERENCES: false, 'DELIMITER': {'FIELD': '\t',WRAP: '"'}};
+      converter.json2csv(this.state.dataj, (err, tsv) => {
+          if (err) throw err;
+          cb(tsv);
+      }, opts);
+    } else {
+        if (this.state.dataFormat === 'json') {
+          cb(JSON.stringify(this.state.dataj));
+        } else {
+          this._conversion(this.state.dataFormat,'export',cb)
+        }
     }
   },
 
@@ -138,6 +161,8 @@ let Result = React.createClass({
     const defaultColor = "#FFFFFF";
     return (
           <div className="result right col-xs-12 col-sm-8 col-md-8 col-lg-8">
+
+            <h2>Results Preview</h2>
 
             <div className="action-buttons center-xs">
               <FlatButton data-format={"json"} ref="btnJSON" label="JSON" primary={true} style={{borderBottom:(this.state.dataFormat==='json' ? '2px solid '+primaryColor : 'none')}} onTouchTap={this._onFormatTap} />
@@ -156,9 +181,9 @@ let Result = React.createClass({
                 title={"Help?"}
                 actions={[{ text: 'Got it' }]}
               >
-                <p>After clicking an action at the left, a service query is made. <br/>The results will live in the panel below.</p>
+                <p>After submitting a search or clicking an action at the left, a service query is made. <br/>A preview of the results will live in the panel below.</p>
                 <p>You can toggle the format of the result data: json, csv, tab-delimited (tsv), table.</p>
-                <p>The Export button will download a file of the results according to the selected format, containing all the fields fetched.</p>
+                <p>The Export button will download a file of all the query results according to the selected format, containing all the fields fetched.</p>
               </Dialog>
 
             </div>
