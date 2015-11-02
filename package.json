@@ -25,6 +25,7 @@
   },
   "dependencies": {
     "flat": "^1.6.0",
+    "immutable": "^3.7.5",
     "json-2-csv": "^1.4.0",
     "material-ui": "^0.12.3",
     "myvariantjs": "file:../myvariantjs",

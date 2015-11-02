@@ -132,8 +132,8 @@ body {
 
 
 .btnAdd {
+  font-size: small !important;
   padding: 0 !important;
-  margin: 20px 0 0 0 !important;
   z-index: 5;
 }
 .btnAdd:hover {
@@ -143,24 +143,23 @@ body {
   color: rgba(0, 0, 0, 0.4);
 }
 .btnSubmit {
-  margin-top: 30px !important;
-  margin-left: 30% !important;
+  margin-left: 22% !important;
 }
 
 /* -- Search --- */
 
-.searchInputField {
+.searchInputFields {
   margin-bottom: 10px;
 }
-.searchInputField span {
+.searchInputFields span {
   margin-right: 5px;
 }
-.searchInputField .expandus,
-.searchInputField .minus {
+.searchInputFields .expandus,
+.searchInputFields .minus {
   float:right;
   clear:both;
 }
-.searchInputField .minus:hover path{
+.searchInputFields .minus:hover path{
   cursor: pointer;
   fill: rgba(189, 8, 8, 0.87);
 }
@@ -213,6 +212,18 @@ body {
   color: rgba(0, 0, 0, 0.54);
 }
 
+
+
+ /*--- Fields -----------------*/
+.fieldsDialog .row:hover {
+  cursor: pointer;
+  color: orange;
+  background-color: rgba(176, 196, 222, 0.31);
+}
+
+.fieldsDialog .selected {
+  color: #62CE2B;
+}
 
  /*--- Result -----------------*/
 
