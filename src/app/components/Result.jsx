@@ -1,6 +1,7 @@
 require("babelify/polyfill");
 
-const converter = require('json-2-csv');
+//import jsonexport from 'jsonexport';
+import converter from 'json-2-csv';
 const flat = require('flat');
 const React = require('react');
 const mui = require('material-ui');
@@ -116,7 +117,7 @@ let Result = React.createClass({
       // from json to tsv
       if (['csv','tsv'].includes(format)) {
         let opts = {CHECK_SCHEMA_DIFFERENCES: false, 'DELIMITER': {'FIELD': (format === 'tsv' ? '\t' : ',') ,WRAP: '"'}};
-        converter.json2csv(dat, (err, csv) => {
+        jsonexport(dat, (err, csv) => {
             if (err) throw err;
             // call setState for preview or export click for export
             cb(isPreview ? {datas: csv, dataFormat: format} : csv);

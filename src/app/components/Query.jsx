@@ -25,6 +25,7 @@ let AddIcon = require('../svg-icons/add.jsx');
 let DelIcon = require('../svg-icons/del.jsx');
 let MoreVertIcon = require('../svg-icons/more-vert.jsx');
 
+let Result = require('./Result.jsx');
 import FieldList from './FieldList.jsx';
 
 
@@ -60,6 +61,10 @@ let Query = React.createClass({
   },
   getInitialState(){
     return {
+      data: [],
+      activeTab: 'search',  // 'search','find','examples'
+      isLoading: false,
+      lastAction: null,
       showFieldList: false,
       colors: this.props.colors,
       actions: this.props.actions,
@@ -97,8 +102,16 @@ let Query = React.createClass({
   _fieldItemTap(val) {
     if (this.state.fieldCursor) {
       if (this.state.fieldCursor.source === 'searchFields') {
-        this._handleSelectSearchField(this.state.fieldCursor.name, val)
-        this._closeFieldList();
+        if (this.state.fieldCursor.name === 'outputFields') {
+          if (this.state.searchFields.output.includes(val)) {
+            this._handleRemoveOutputField('searchFields',val);
+          } else {
+            this._handleAddOutputField('searchFields',val);
+          }
+        } else {
+          this._handleSelectSearchField(this.state.fieldCursor.name, val);
+          this._closeFieldList();
+        }
       } else if (this.state.fieldCursor.source === 'scopeFields') {
       }
       //else if (this.state.fieldCursor.source === 'Fields') {}
@@ -106,10 +119,10 @@ let Query = React.createClass({
   },
 
   _fetchData(actionN){
-    if (actionN === this.props.lastAction) return;
+    if (actionN === this.state.lastAction) return;
 
     let self = this;
-    self.props._setState({'isLoading':true});
+    self.setState({'isLoading':true});
 
     let action = actionN;
     // check if action is a string call by name or an object argument.
@@ -124,12 +137,12 @@ let Query = React.createClass({
           if (action.caller === 'getfields') dat = utils._flatten(res);
           if (action.caller === 'query') dat = utils._flatten(res.hits);
           dat = dat.map( d => flat(d) );
-          self.props._setState({data:dat,'isLoading':false,'lastAction':actionN});
+          self.setState({data:dat,'isLoading':false,'lastAction':actionN});
       })
       .catch(
         function(reason) {
           console.log('All manner of chaos ensued.  Data could not be fetched, for this reason: '+reason);
-          self.props._setState({data:[],'isLoading':false,'lastAction':actionN});
+          self.setState({data:[],'isLoading':false,'lastAction':actionN});
       });
   },
 
@@ -142,7 +155,7 @@ let Query = React.createClass({
         q = this.state.qSearch;
       } else {
         Object.keys(this.state.searchFields.search).map(function(f){
-          if (self.state.searchFields.search[f].value)
+          if (self.state.searchFields.search[f] && self.state.searchFields.search[f].value)
             arr.push(self.state.searchFields.search[f].name+':'+self.state.searchFields.search[f].value)
         })
         q = arr.join(' AND ');
@@ -156,16 +169,25 @@ let Query = React.createClass({
   },
 
   _handleAddSearchField(){
+    // look at all search field names,
+    // if any are null then prevent adding new search fields
     let obj = Object.assign(this.state.searchFields);
-    obj['select'+Object.keys(this.state.searchFields).length] = null;
-    this.setState({'searchFields':obj})
+    let keyz = Object.keys(this.state.searchFields.search);
+    let accountedFor = true;
+    for (let k of keyz) {
+      if (obj.search[k].hasOwnProperty('name') && !obj.search[k].name) accountedFor = false;
+    }
+    if (accountedFor) {
+        obj.search['select'+keyz.length] = null;
+        this.setState({'searchFields':obj})
+    }
   },
 
   _handleSelectSearchField(name,val){
     if (!this.state.searchFields[name] || val !== this.state.searchFields[name].name) {
       let obj = Object.assign(this.state.searchFields);
       obj.search[name] = Object.assign({},this.state.searchFields.search[name],{'name': val});
-      this.setState({'searchFields':obj})
+      this.setState({'searchFields':obj}, this._handleAddSearchField)
     }
   },
 /*
@@ -217,11 +239,39 @@ let Query = React.createClass({
 
   _handleClear(searchType){
     if (searchType === 'search') {
-      this.setState({'qSearch': null, 'searchFields':{}});
+      this.setState({
+        qSearch: null,
+        searchFields: {
+          search: {'select0':{}},
+          output: []
+        },
+      });
     }
     if (searchType === 'find') {
-      this.setState({'qSearchMany':null, 'scopeFields':null});
+      this.setState({
+        qSearchMany: null,
+        scopeFields: {
+          search: [],
+          output: []
+        },
+      });
     }
+  },
+
+  _handleAddOutputField(source,field){
+    let newObj = {};
+    let obj = Object.assign(this.state[source]);
+    obj.output.push(field);
+    newObj[source] = obj;
+    this.setState(newObj);
+  },
+
+  _handleRemoveOutputField(data){
+    let newObj = {};
+    let obj = Object.assign(this.state[data.source]);
+    obj.output.splice(this.state[data.source].output.indexOf(data.field),1);
+    newObj[data.source] = obj;
+    this.setState(newObj);
   },
 
   _openFieldList(field){
@@ -230,6 +280,10 @@ let Query = React.createClass({
 
   _closeFieldList(){
     this.setState({'showFieldList': false, 'fieldCursor':null});
+  },
+
+  _setTab(t){
+    this.setState({activeTab:t});
   },
 
   render() {
@@ -243,7 +297,7 @@ let Query = React.createClass({
           key={"action"+i}
           colors={this.state.colors}
           action={a}
-          lastAction={this.props.lastAction}
+          lastAction={this.state.lastAction}
           onListItemTap={this._listItemTap} />
         );
     });
@@ -252,58 +306,64 @@ let Query = React.createClass({
 
 
     // -------------------- SEARCH FIELDS ------------------------------- //
-    let selectfields = Object.keys(this.state.searchFields.search).map(function(f,i){
+    let searchInputFields = Object.keys(this.state.searchFields.search).map(function(f,i){
       let searchName = (f && self.state.searchFields.search[f] && Object.keys(self.state.searchFields.search[f]).includes('name')) ? self.state.searchFields.search[f].name : null;
       let searchVal = (f && self.state.searchFields.search[f] && Object.keys(self.state.searchFields.search[f]).includes('value')) ? self.state.searchFields.search[f].value : null;
 
       return (
-        <div className="row">
-            <div className="col-xs-2 col-sm-2 col-md-2 col-lg-2" style={{height:'100%'}}>
+        <div className="searchInputFields row">
+            <div className="col-xs-1 col-sm-1 col-md-1 col-lg-1" style={{'marginTop':'25px', 'marginRight':'10px'}} >
               <RaisedButton
                 ref={'searchField'+i}
                 className={'searchField '+f}
-                label={'F'}
+                labelStyle={{'padding':'0px'}}
+                label={'+ Field'}
                 primary={true}
-                style={{height:'115px'}}
                 fullWidth={true}
                 onClick={self._openFieldList.bind(null,{name:f,source:'searchFields'})} >
               </RaisedButton>
             </div>
 
-            <div className="col-xs-11 col-sm-10 col-md-10 col-lg-10">
-
-              <div className="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                <TextField
-                  ref={'searchTermField'+i}
-                  floatingLabelText="Search Field"
-                  fullWidth={true}
-                  value={searchName} />
-              </div>
-
-              <div className="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                <TextField
-                  ref={'searchTermField'+i}
-                  hintText="Enter Term"
-                  floatingLabelText="Search Term"
-                  fullWidth={true}
-                  value={searchVal}
-                  onBlur={self._handleInputChange.bind(null,i)} />
-              </div>
-
+            <div className="col-xs-4 col-sm-4 col-md-4 col-lg-4" style={{'marginLeft':'10px', 'marginRight':'5%'}} >
+              <TextField
+                ref={'searchTermField'+i}
+                disabled={true}
+                floatingLabelText="Search Field"
+                value={searchName}
+                fullWidth={true} />
             </div>
-            <DelIcon className="minus faded-grey col-xs-2 col-sm-2 col-md-2 col-lg-2" onTouchTap={self._removeSearchField.bind(null,f)}/>
+
+            <div className="col-xs-4 col-sm-4 col-md-4 col-lg-4">
+              <TextField
+                ref={'searchTermField'+i}
+                hintText="Enter Term"
+                floatingLabelText="Search Term"
+                fullWidth={true}
+                value={searchVal}
+                onBlur={self._handleInputChange.bind(null,i)} />
+            </div>
+
+            <DelIcon
+              className="del faded-grey col-xs-1 col-sm-1 col-md-1 col-lg-1"
+              style={{'marginTop':'40px'}}
+              onTouchTap={self._removeSearchField.bind(null,f)} />
         </div>
       );
     });
 
     // -------------------- SEARCH OUTPUT FIELDS ------------------------------- //
-    let searchOutputFields;
+    let searchOutputFields = [];
+    searchOutputFields.push(<ListItem key={'outputAll'} className={'searchOutputField outputField'} primaryText={'All Fields'} />);
     if (this.state.searchFields &&
         this.state.searchFields.output &&
         this.state.searchFields.output.length) {
-      this.state.searchFields.output.map(function(f,i){
+      searchOutputFields = this.state.searchFields.output.map(function(f,i){
         return (
-          <ListItem key={'output'+i} className={'searchOutputField'} primaryText={f} />
+          <ListItem
+            key={'output'+i}
+            className={'searchOutputField outputField'}
+            primaryText={f}
+            rightIcon={<DelIcon className="del" onTouchTap={self._handleRemoveOutputField.bind(null,{source:'searchFields',field:f})} />} />
         );
       });
     }
@@ -337,95 +397,127 @@ let Query = React.createClass({
     let activeFields = [];
     if (this.state.fieldCursor) {
       if (this.state.fieldCursor.source === 'searchFields') {
-        activeFields.push(this.state[this.state.fieldCursor.source].search[this.state.fieldCursor.name].name);
+        if (this.state.fieldCursor.name === 'outputFields') {
+          activeFields = this.state.searchFields.output;
+        } else if (this.state.searchFields.search[this.state.fieldCursor.name] && this.state.searchFields.search[this.state.fieldCursor.name].name) {
+            activeFields.push(this.state.searchFields.search[this.state.fieldCursor.name].name);
+        }
       }
+
       if (this.state.fieldCursor.source === 'scopeFields') {
-        activeFields = this.state[this.state.fieldCursor.source].search;
-      }
-      if (this.state.fieldCursor.source === 'outputFields') {
-        activeFields = this.state[this.state.fieldCursor.source].output;
+        if (this.state.fieldCursor.name === 'outputFields') {
+          activeFields = this.state.scopeFields.output;
+        } else {
+          activeFields = this.state[this.state.fieldCursor.source].search;
+        }
       }
     }
 
 
     // -------------------- RENDER --------------------------------------- //
     return (
-      <div className="query left col-xs-12 col-sm-4 col-md-4 col-lg-4">
-        <h2>Search</h2>
+      <div className="query col-xs-12 col-sm-12 col-md-12 col-lg-12">
 
-        <Tabs contentContainerStyle={{'paddingTop':'15px'}} value={this.props.activeTab}>
+        <Tabs contentContainerStyle={{'paddingTop':'15px'}} value={this.state.activeTab.split('.')[0]||'search'}>
+
+          {/* -------- Spacer Tab --------------*/}
+          <Tab value="x"></Tab>
+
+          {/* -------- Search Tab --------------*/}
+          <Tab label="Search" className="query-tab col-xs-2 col-sm-2 col-md-2 col-lg-2" style={{color:this.state.colors.primaryColor}} value="search" onActive={this._setTab.bind(null,'search')}>
+
+            <Card style={{'padding':'20px 35px'}}>
+              <CardText>
+                <Tabs contentContainerStyle={{'paddingTop':'15px'}} value={this.state.activeTab.split('.')[1]||'input'}>
+
+                  {/* -------- Input Tab --------------*/}
+                  <Tab label="Input" className="query-tab" style={{color:this.state.colors.primaryColor}} value="input" onActive={this._setTab.bind(null,'search.input')}>
+
+                    <div className='fSearch'>
+                      <h3>Field Search</h3>
+                      {searchInputFields}
+                    </div>
+
+                    <CardText>
+                        <FlatButton ref="btnSubmit" className="btnSubmit" label="Submit" secondary={true} onTouchTap={this._handleSubmit.bind(null,'search')} />
+                        <FlatButton ref="btnClear" className="btnClear" label="Clear Search Inputs" secondary={true} onTouchTap={this._handleClear.bind(null,'search')} />
+                    </CardText>
+
+                    <br />
+
+                    <div className='qSearch'>
+                      <h3>Simple Search</h3>
+
+                      <TextField
+                        hintText="Search"
+                        floatingLabelText="Enter the full fielded query string or simple search term here"
+                        fullWidth={true}
+                        valueLink={this.linkState('qSearch')} />
+                    </div>
+
+                    <CardText>
+                        <FlatButton ref="btnSubmit" className="btnSubmit" label="Submit" secondary={true} onTouchTap={this._handleSubmit.bind(null,'search')} />
+                        <FlatButton ref="btnClear" className="btnClear" label="Clear Search Inputs" secondary={true} onTouchTap={this._handleClear.bind(null,'search')} />
+                    </CardText>
+
+                    <br />
+
+                    <div className="search-notes">
+                     <h3>Notes</h3>
+                      <p>If running a general search without field names, it will be limited to rsid and hgvs names.</p>
+                      <p>Wildcard character “*” or ”?” is supported in either simple queries or fielded queries:</p>
+                      <pre>
+                        <p>dbnsfp.genename:CDK?</p>
+                        <p>dbnsfp.genename:CDK*</p>
+                      </pre>
+                      <p>Wildcard character can not be the first character. It will be ignored.</p>
+                    </div>
+
+                  </Tab>
 
 
-        {/* -------- Search Tab --------------*/}
-          <Tab label="Search" className="query-tab" style={{color:this.state.colors.primaryColor}} value="search" onActive={this.props._setTab.bind(null,'search')}>
-            <h3>Search in any field...</h3>
 
-            <Card className={'searchOutputFields'} initiallyExpanded={false}>
-              <CardHeader
-                  title={"Output Fields"}
-                  avatar={<Avatar>F</Avatar>}
-                  actAsExpander={true}
-                  showExpandableButton={true}>
+                  {/* -------- Output Tab --------------*/}
+                  <Tab label="Output" className="query-tab" style={{color:this.state.colors.primaryColor}} value="output" onActive={this._setTab.bind(null,'search.output')}>
+                    <div style={{marginTop: '20px', marginLeft: '47.5%'}}>
+                      <RaisedButton
+                        labelStyle={{'padding':'0px'}}
+                        label={'+ Field'}
+                        primary={true}
+                        onClick={this._openFieldList.bind(null,{name:'outputFields',source:'searchFields'})} >
+                      </RaisedButton>
+                    </div>
+                    <Card style={{margin:'1% 20%'}}>
+                      <CardText>
+                        <List>
+                          {searchOutputFields}
+                        </List>
+                      </CardText>
+                    </Card>
+                  </Tab>
 
-               <FlatButton ref="btnClear" className="btnClear" label="Clear" secondary={true} onTouchTap={this._handleClear.bind(null,'search')} />
 
-               </CardHeader>
+                  {/* -------- Results Tab --------------*/}
+                  <Tab label="Results" className="query-tab" style={{color:this.state.colors.primaryColor}} value="results" onActive={this._setTab.bind(null,'search.results')}>
 
-              <CardText expandable={true}>
-                <List>
-                  {searchOutputFields}
-                </List>
-              </CardText>
+                    <Result
+                      isLoading={this.state.isLoading}
+                      data={this.state.data}
+                      actions={this.props.actions}
+                      lastAction={this.state.lastAction} />
+
+                  </Tab>
+
+                 </Tabs>
+               </CardText>
+
             </Card>
 
-
-            <Card className={'searchInputFields'} initiallyExpanded={true}>
-              <CardHeader
-                  title={"Search Fields"}
-                  avatar={<Avatar>S</Avatar>}
-                  actAsExpander={true}
-                  showExpandableButton={true}>
-
-               <FlatButton ref="btnClear" className="btnClear" label="Clear" secondary={true} onTouchTap={this._handleClear.bind(null,'searchOutput')} />
-
-               </CardHeader>
-
-              <CardText expandable={true}>
-                {selectfields}
-
-                 <FlatButton ref="btnSubmit" className="btnSubmit" label="Submit" secondary={true} onTouchTap={this._handleSubmit.bind(null,'search')} />
-
-            <FlatButton className="btnAdd" tooltip="Field to Search" tooltipPosition="bottom-right" touch={true} onTouchTap={self._handleAddSearchField}>
-              <AddIcon className="faded-grey" />
-              <span className="faded-grey" style={{"verticalAlign":"super", "padding":"0 5px"}}>Add Another Field</span>
-            </FlatButton>
-
-
-{/*
-            <h4>Or run a limited general search...</h4>
-
-            <TextField
-              hintText="Search"
-              floatingLabelText="Enter Search Term Here"
-              fullWidth={true}
-              valueLink={this.linkState('qSearch')} />
-
-            <br />
-            <p style={{fontStyle:'italic',fontSize:'x-small'}}><b>note:</b> general search service currently supports <b>only</b> <span style={{color:'red'}}>rsid</span> and <span style={{color:'red'}}>hgvs names</span></p>
-            <br/>
-
-            <FlatButton ref="btnSubmit" className="btnSubmit" label="Submit" secondary={true} onTouchTap={this._handleSubmit.bind(null,'search')} />
-            <FlatButton ref="btnClear" className="btnClear" label="Clear" secondary={true} onTouchTap={this._handleClear.bind(null,'search')} />
-*/}
-
-              </CardText>
-            </Card>
-
-          </Tab>
+           </Tab>
 
 
         {/* -------- Find Tab --------------*/}
-          <Tab label="Find" className="query-tab" style={{color:this.state.colors.primaryColor}} value="find" onActive={this.props._setTab.bind(null,'find')}>
+          <Tab label="Find" className="query-tab col-xs-2 col-sm-2 col-md-2 col-lg-2" style={{color:this.state.colors.primaryColor}} value="find" onActive={this._setTab.bind(null,'find')}>
             <h3>Find Many Variants in Batch</h3>
 
             <TextField
@@ -453,12 +545,15 @@ let Query = React.createClass({
           </Tab>
 
         {/* -------- Examples Tab --------------*/}
-          <Tab label="Try" className="query-tab" style={{color:this.state.colors.primaryColor}} value="examples" onActive={this.props._setTab.bind(null,'examples')}>
+          <Tab label="Try" className="query-tab col-xs-2 col-sm-2 col-md-2 col-lg-2" style={{color:this.state.colors.primaryColor}} value="examples" onActive={this._setTab.bind(null,'examples')}>
             <h3>Try Some Examples</h3>
             <List insetSubheader={true} subheader={"Click an Action below"}>
               {items}
             </List>
           </Tab>
+
+          {/* -------- Spacer Tab --------------*/}
+          <Tab value="x"></Tab>
 
         </Tabs>
 

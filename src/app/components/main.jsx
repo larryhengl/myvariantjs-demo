@@ -6,7 +6,6 @@ const mv = require('myvariantjs');
 const utils = require('../utils');
 
 let Query = require('./Query.jsx');
-let Result = require('./Result.jsx');
 let ThemeManager = mui.Styles.ThemeManager;
 
 // customize theme
@@ -52,11 +51,7 @@ let Main = React.createClass({
       colors: colors,
       actions: actions,
       short: false,
-      isLoading: false,
-      data: [],
       fields: [],
-      lastAction: null,
-      activeTab: 'search',  // 'search','find','examples'
     };
   },
 
@@ -75,21 +70,12 @@ let Main = React.createClass({
       })
       .catch(
         function(reason) {
-          console.log('All manner of chaos ensued.  Data could not be fetched, for this reason: '+reason);
-          //self.setState({data:[]});
+          console.log('All manner of chaos ensued.  Fields could not be fetched, for this reason: '+reason);
       });
   },
 
   _shorten(){
     this.setState({short:true})
-  },
-
-  _setState(data){
-    this.setState(data)
-  },
-
-  _setTab(t){
-    this.setState({activeTab:t})
   },
 
   render(){
@@ -114,24 +100,13 @@ let Main = React.createClass({
         </section>
 
         {/*<section className="main-content" onClick={this._shorten}>*/}
-        <section className="main-content">
-          <div className="row">
+        <section className="main-content row">
 
             <Query
               colors={this.state.colors}
               actions={this.state.actions}
-              _setState={this._setState}
-              fields={this.state.fields}
-              activeTab={this.state.activeTab}
-              _setTab={this._setTab} />
+              fields={this.state.fields} />
 
-            <Result
-              isLoading={this.state.isLoading}
-              data={this.state.data}
-              actions={this.state.actions}
-              lastAction={this.state.lastAction} />
-
-          </div>
         </section>
 
         <section className="page-footer">

@@ -105,16 +105,12 @@ body {
 
  /* --- Query --- */
 
-.query.left {
-  padding-right: 30px;
-}
+
 .query h2 {
   text-align: center;
 }
 
-.left h1, .left h2 {
-  margin-left: 45px;
-}
+
 .query-tab {
   text-transform: uppercase;
 }
@@ -131,48 +127,43 @@ body {
 }
 
 
-.btnAdd {
-  font-size: small !important;
-  padding: 0 !important;
-  z-index: 5;
-}
-.btnAdd:hover {
-  background-color: rgba(137, 255, 60, 0.15) !important;
-}
-.btnAdd span {
-  color: rgba(0, 0, 0, 0.4);
-}
 .btnSubmit {
-  margin-left: 22% !important;
+  margin-left: 40% !important;
 }
 
 /* -- Search --- */
 
-.searchInputFields {
-  margin-bottom: 10px;
+.query .searchInputFields {
+  margin-bottom: 10px !important;
+  margin-top: 20px !important;
 }
-.searchInputFields span {
-  margin-right: 5px;
-}
-.searchInputFields .expandus,
-.searchInputFields .minus {
-  float:right;
-  clear:both;
-}
-.searchInputFields .minus:hover path{
+.query .searchInputFields .del:hover path{
   cursor: pointer;
   fill: rgba(189, 8, 8, 0.87);
 }
-.searchField svg {
+.query .searchField svg {
   fill: #9C9A9A !important;
 }
-.searchField .selectFieldButton {
-  float: left;
-  margin-top: 5px;
-  margin-right: -20px;
+.query .qSearch,
+.query .fSearch {
+  margin-top: 30px;
+  border: 1px dotted lightgrey;
+  padding: 25px;
+  border-radius: 10px;
+  background-color: rgba(211,211,211,0.2);
 }
-
-
+.query .search-notes {
+  font-size: smaller;
+  margin-top: 30px;
+  border: 1px dotted lightgrey;
+  padding: 15px;
+  border-radius: 10px;
+  background-color: rgba(211,211,211,0.02);
+}
+.query .search-notes pre p {
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
+}
 
 /* -- Find Many --- */
 
@@ -224,6 +215,18 @@ body {
 .fieldsDialog .selected {
   color: #62CE2B;
 }
+
+.outputField svg.del {
+  top: 25% !important;
+  padding: 0px !important;
+  right: 27px !important;
+  fill: #9C9A9A !important;
+}
+.outputField svg.del:hover path {
+  cursor: pointer;
+  fill: rgba(189, 8, 8, 0.87);
+}
+
 
  /*--- Result -----------------*/
 
