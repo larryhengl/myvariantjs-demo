@@ -49,7 +49,8 @@ gulp.task('browserify', function(callback) {
         .on('end', reportFinished);
     };
 
-    bundler.transform(babelify.configure({stage: 1}));
+    //bundler.transform(babelify.configure({stage: 1}));
+    bundler.transform('babelify', {presets: ['es2015', 'react']});
 
     if (global.isWatching) {
       // Wrap with watchify and rebundle on changes

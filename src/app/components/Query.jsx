@@ -5,6 +5,7 @@ const React = require('react/addons');
 const mui = require('material-ui');
 const mv = require('myvariantjs');
 const utils = require('../utils');
+const mixins = require('baobab-react/mixins');
 
 let Avatar = mui.Avatar;
 let List = mui.List;
@@ -29,20 +30,20 @@ let Result = require('./Result.jsx');
 import FieldList from './FieldList.jsx';
 
 
-// ----------------- ACTION LIST ITEM COMPONENT -------------------------------------- //
-let ActionItem = React.createClass({
+// ----------------- example LIST ITEM COMPONENT -------------------------------------- //
+let ExampleItem = React.createClass({
   render(){
     return (
       <ListItem
-        data-action={this.props.action.num}
+        data-example={this.props.example.num}
         primaryText={
           <div className="row">
             <div className="col-xs-1 col-sm-1 col-md-1 col-lg-1">
-              <span style={{color: (this.props.lastAction===this.props.action.num ? this.props.colors.primaryColor : this.props.colors.defaultColor)}} className="mega-octicon super-octicon octicon-chevron-right"></span>
+              <span style={{color: (this.props.lastExample===this.props.example.num ? this.props.colors.green : this.props.colors.defaultColor)}} className="mega-octicon super-octicon octicon-chevron-right"></span>
             </div>
             <div className="col-xs-11 col-sm-11 col-md-11 col-lg-11">
-              <span className="itemPrimaryTitle" style={{color: this.props.colors.primaryColor}} dangerouslySetInnerHTML={utils._htmlify(this.props.action.title1)}></span><br/>
-              <span className="itemSecondaryTitle title2">{this.props.action.title2}</span>
+              <span className="itemPrimaryTitle" style={{color: this.props.colors.green}} dangerouslySetInnerHTML={utils._htmlify(this.props.example.title1)}></span><br/>
+              <span className="itemSecondaryTitle title2">{this.props.example.title2}</span>
             </div>
           </div>
         }
@@ -55,19 +56,18 @@ let ActionItem = React.createClass({
 
 // --------------- MAIN QUERY ---------------------------------------- //
 let Query = React.createClass({
-  mixins: [React.addons.LinkedStateMixin],
+  mixins: [mixins.branch, React.addons.LinkedStateMixin],
   contextTypes: {
     muiTheme: React.PropTypes.object,
+  },
+  cursors: {
+    colors: ['colors'],
+
   },
   getInitialState(){
     return {
       data: [],
       activeTab: 'search',  // 'search','find','examples'
-      isLoading: false,
-      lastAction: null,
-      showFieldList: false,
-      colors: this.props.colors,
-      actions: this.props.actions,
       query: {
         search: {
           input: [{}],
@@ -114,7 +114,7 @@ let Query = React.createClass({
   },
 
   _listItemTap(e) {
-    this._fetchData(e.currentTarget.getAttribute("data-action"));
+    this._fetchData(e.currentTarget.getAttribute("data-example"));
   },
 
   _fieldItemTap(val) {
@@ -136,31 +136,31 @@ let Query = React.createClass({
     }
   },
 
-  _fetchData(actionN){
-    if (actionN === this.state.lastAction) return;
+  _fetchData(exampleN){
+    if (exampleN === this.state.lastExample) return;
 
     let self = this;
     self.setState({'isLoading':true});
 
-    let action = actionN;
-    // check if action is a string call by name or an object argument.
-    // if string then do an action lookup, otherwise assume the obj passed is an action obj.
-    if (typeof actionN === 'string') action = self.state.actions[actionN];
+    let example = exampleN;
+    // check if example is a string call by name or an object argument.
+    // if string then do an example lookup, otherwise assume the obj passed is an example obj.
+    if (typeof exampleN === 'string') example = self.state.examples[exampleN];
 
-    let got = action.params === null ? mv[action.caller]() : mv[action.caller](...action.params);
+    let got = example.params === null ? mv[example.caller]() : mv[example.caller](...example.params);
     got.then(
         function(res) {
           let dat = res;
           if (!Array.isArray(res)) dat = [res];
-          if (action.caller === 'getfields') dat = utils._flatten(res);
-          if (action.caller === 'query') dat = utils._flatten(res.hits);
+          if (example.caller === 'getfields') dat = utils._flatten(res);
+          if (example.caller === 'query') dat = utils._flatten(res.hits);
           dat = dat.map( d => flat(d) );
-          self.setState({data:dat,'isLoading':false,'lastAction':actionN});
+          self.setState({data:dat,'isLoading':false,'lastExample':exampleN});
       })
       .catch(
         function(reason) {
           console.log('All manner of chaos ensued.  Data could not be fetched, for this reason: '+reason);
-          self.setState({data:[],'isLoading':false,'lastAction':actionN});
+          self.setState({data:[],'isLoading':false,'lastExample':exampleN});
       });
   },
 
@@ -313,14 +313,14 @@ let Query = React.createClass({
     let self = this;
 
 
-    // ---------------- EXAMPLE ACTION ITEMS ----------------------------- //
-    let items = this.state.actions.map((a,i)=>{
+    // ---------------- EXAMPLE example ITEMS ----------------------------- //
+    let items = this.state.examples.map((a,i)=>{
       return (
-        <ActionItem
-          key={"action"+i}
+        <exampleItem
+          key={"example"+i}
           colors={this.state.colors}
-          action={a}
-          lastAction={this.state.lastAction}
+          example={a}
+          lastExample={this.state.lastExample}
           onListItemTap={this._listItemTap} />
         );
     });
@@ -447,14 +447,14 @@ let Query = React.createClass({
           <Tab value="x"></Tab>
 
           {/* -------- Search Tab --------------*/}
-          <Tab label="Search" className="query-tab col-xs-2 col-sm-2 col-md-2 col-lg-2" style={{color:this.state.colors.primaryColor}} value="search" onActive={this._setTab.bind(null,'search')}>
+          <Tab label="Search" className="query-tab col-xs-2 col-sm-2 col-md-2 col-lg-2" style={{color:this.state.colors.green}} value="search" onActive={this._setTab.bind(null,'search')}>
 
             <Card style={{'padding':'20px 35px'}}>
               <CardText>
                 <Tabs contentContainerStyle={{'paddingTop':'15px'}} value={this.state.activeTab.split('.')[1]||'input'}>
 
                   {/* -------- Input Tab --------------*/}
-                  <Tab label="Input" className="query-tab" style={{color:this.state.colors.primaryColor}} value="input" onActive={this._setTab.bind(null,'search.input')}>
+                  <Tab label="Input" className="query-tab" style={{color:this.state.colors.green}} value="input" onActive={this._setTab.bind(null,'search.input')}>
 
                     <div className='fSearch'>
                       <h3>Field Search</h3>
@@ -501,7 +501,7 @@ let Query = React.createClass({
 
 
                   {/* -------- Output Tab --------------*/}
-                  <Tab label="Output" className="query-tab" style={{color:this.state.colors.primaryColor}} value="output" onActive={this._setTab.bind(null,'search.output')}>
+                  <Tab label="Output" className="query-tab" style={{color:this.state.colors.green}} value="output" onActive={this._setTab.bind(null,'search.output')}>
                     <div style={{marginTop: '20px', marginLeft: '47.5%'}}>
                       <RaisedButton
                         labelStyle={{'padding':'0px'}}
@@ -521,13 +521,13 @@ let Query = React.createClass({
 
 
                   {/* -------- Results Tab --------------*/}
-                  <Tab label="Results" className="query-tab" style={{color:this.state.colors.primaryColor}} value="results" onActive={this._setTab.bind(null,'search.results')}>
+                  <Tab label="Results" className="query-tab" style={{color:this.state.colors.green}} value="results" onActive={this._setTab.bind(null,'search.results')}>
 
                     <Result
                       isLoading={this.state.isLoading}
                       data={this.state.data}
-                      actions={this.props.actions}
-                      lastAction={this.state.lastAction} />
+                      examples={this.props.examples}
+                      lastExample={this.state.lastExample} />
 
                   </Tab>
 
@@ -540,7 +540,7 @@ let Query = React.createClass({
 
 
         {/* -------- Find Tab --------------*/}
-          <Tab label="Find" className="query-tab col-xs-2 col-sm-2 col-md-2 col-lg-2" style={{color:this.state.colors.primaryColor}} value="find" onActive={this._setTab.bind(null,'find')}>
+          <Tab label="Find" className="query-tab col-xs-2 col-sm-2 col-md-2 col-lg-2" style={{color:this.state.colors.green}} value="find" onActive={this._setTab.bind(null,'find')}>
             <h3>Find Many Variants in Batch</h3>
 
             <TextField
@@ -568,9 +568,9 @@ let Query = React.createClass({
           </Tab>
 
         {/* -------- Examples Tab --------------*/}
-          <Tab label="Try" className="query-tab col-xs-2 col-sm-2 col-md-2 col-lg-2" style={{color:this.state.colors.primaryColor}} value="examples" onActive={this._setTab.bind(null,'examples')}>
+          <Tab label="Try" className="query-tab col-xs-2 col-sm-2 col-md-2 col-lg-2" style={{color:this.state.colors.green}} value="examples" onActive={this._setTab.bind(null,'examples')}>
             <h3>Try Some Examples</h3>
-            <List insetSubheader={true} subheader={"Click an Action below"}>
+            <List insetSubheader={true} subheader={"Click an Example below"}>
               {items}
             </List>
           </Tab>

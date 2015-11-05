@@ -1,72 +1,49 @@
-require("babelify/polyfill");
 const React = require('react');
+const ReactDOM = require('react-dom');
 const flat = require('flat');
 const mui = require('material-ui');
 const mv = require('myvariantjs');
 const utils = require('../utils');
-
-let Query = require('./Query.jsx');
+const mixins = require('baobab-react/mixins');
+//let Query = require('./Query.jsx');
 let ThemeManager = mui.Styles.ThemeManager;
 
-// customize theme
-let customTheme = ThemeManager.getMuiTheme(mui.Styles.LightRawTheme);
-customTheme.tabs.backgroundColor = "#FFFFFF";
-customTheme.raisedButton.primaryColor = "#62CE2B";
-customTheme.flatButton.primaryTextColor = "#62CE2B";
-customTheme.flatButton.secondaryTextColor = "#2679E1";
-customTheme.inkBar.backgroundColor = "#62CE2B";
-
-customTheme.textField.floatingLabelColor = "#2679E1";
-customTheme.textField.focusColor = "#2679E1";
-customTheme.textField.borderColor = "#2679E1";
-
-
 let Main = React.createClass({
+  mixins: [mixins.root],
+
   childContextTypes: {
     muiTheme: React.PropTypes.object,
   },
 
   getChildContext() {
+    let colors = this.props.tree.get().colors;
+
+    // customize theme
+    let customTheme = ThemeManager.getMuiTheme(mui.Styles.LightRawTheme);
+    customTheme.tabs.backgroundColor = colors.white;
+    customTheme.raisedButton.primaryColor = colors.green;
+    customTheme.flatButton.primaryTextColor = colors.green;
+    customTheme.flatButton.secondaryTextColor = colors.blue;
+    customTheme.inkBar.backgroundColor = colors.green;
+    customTheme.textField.floatingLabelColor = colors.blue;
+    customTheme.textField.focusColor = colors.blue;
+    customTheme.textField.borderColor = colors.blue;
+
     return {
       muiTheme: customTheme
     };
   },
 
-  getInitialState(){
-    let colors = {
-        primaryColor: customTheme.flatButton.primaryTextColor,
-        secondaryColor: customTheme.flatButton.secondaryTextColor,
-        defaultColor: "#FFFFFF",
-    };
-    let actions = [
-        {'num':'0','caller':'getfields','params':null,'title1':'Get all fields','title2':"GET http://myvariant.info/v1/metadata/fields"},
-        {'num':'1','caller':'getfields','params':['gene'],'title1':"Get field names containing <span style='color: " + colors.secondaryColor + ";'>gene</span>",'title2':"GET http://myvariant.info/v1/metadata/fields, filters for 'gene'"},
-        {'num':'2','caller':'getvariant','params':['chr9:g.107620835G>A'],'title1':"Get variant <span style='color: " + colors.secondaryColor + ";'>chr9:g.107620835G>A</span>",'title2':"GET http://myvariant.info/v1/variant/chr9:g.107620835G>A"},
-        {'num':'3','caller':'getvariant','params':['chr9:g.107620835G>A', ["dbnsfp.genename", "cadd.phred"]],'title1':"Get variant <span style='color: " + colors.secondaryColor + ";'>chr9:g.107620835G>A</span>, only show <span style='color: " + colors.secondaryColor + ";'>dbnsfp.genename</span> and <span style='color: " + colors.secondaryColor + ";'>cadd.phred</span> fields.",'title2':"GET http://myvariant.info/v1/variant/chr9:g.107620835G>A?fields=dbnsfp.genename,cadd.phred"},
-        {'num':'4','caller':'getvariants','params':['chr1:g.866422C>T,chr1:g.876664G>A,chr1:g.69635G>C'],'title1':"Get variants <span style='color: " + colors.secondaryColor + ";'>chr1:g.866422C>T</span>, <span style='color: " + colors.secondaryColor + ";'>chr1:g.876664G>A</span>, <span style='color: " + colors.secondaryColor + ";'>chr1:g.69635G>C</span>",'title2':"POST http://myvariant.info/v1/variant/"},
-        {'num':'5','caller':'query','params':['chr1:69000-70000'],'title1':"Get variants for genomic range <span style='color: " + colors.secondaryColor + ";'>chr1:69000-70000</span>",'title2':"GET http://myvariant.info/v1/query?q=chr1:69000-70000"},
-        {'num':'6','caller':'query','params':['dbsnp.vartype:snp'],'title1':"Get variants for matching value on a specific field <span style='color: " + colors.secondaryColor + ";'>dbsnp.vartype:snp</span>",'title2':"GET http://myvariant.info/v1/query?q=dbsnp.vartype:snp"},
-    ];
-    return {
-      colors: colors,
-      actions: actions,
-      short: false,
-      fields: [],
-    };
-  },
-
   componentWillMount() {
-    // prefetch the fields from myvariant
     let self = this;
-    let action = {'caller':'getfields','params':null};
-    let got = action.params === null ? mv[action.caller]() : mv[action.caller](...action.params);
-    got.then(
+    // prefetch the fields from myvariant
+    mv.getfields().then(
         function(res) {
           let dat = res;
           if (!Array.isArray(res)) dat = [res];
           dat = utils._flatten(res);
           dat = dat.map( d => flat(d) );
-          self.setState({fields:dat});
+          self.props.tree.select('fields').set(dat);
       })
       .catch(
         function(reason) {
@@ -74,15 +51,11 @@ let Main = React.createClass({
       });
   },
 
-  _shorten(){
-    this.setState({short:true})
-  },
-
   render(){
     return (
       <div>
 
-        <section className={"page-header"+(this.state.short ? " short" : "")}>
+        <section className={"page-header"}>
           <section className="sub1">
             <h1 className="project-name">myvariantjs</h1>
             <h2 className="project-name project-tagline">A UI to Search <a href="http://myvariant.info/" target="_blank">MyVariant.info</a></h2>
@@ -99,14 +72,9 @@ let Main = React.createClass({
           </section>
         </section>
 
-        {/*<section className="main-content" onClick={this._shorten}>*/}
         <section className="main-content row">
-
-            <Query
-              colors={this.state.colors}
-              actions={this.state.actions}
-              fields={this.state.fields} />
-
+          {/*  MAIN QUERY COMPONENT INSERTION POINT */}
+          { /* <Query /> */ }
         </section>
 
         <section className="page-footer">

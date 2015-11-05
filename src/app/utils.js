@@ -1,5 +1,6 @@
 // Speed up calls to hasOwnProperty
 let hasOwnProperty = Object.prototype.hasOwnProperty;
+let jsonexport = require('jsonexport');
 
 module.exports = {
 
@@ -39,6 +40,17 @@ module.exports = {
     }
 
     return true;
-  }
+  },
+
+  _convert(format,dat,cb){
+    let options = {};
+    let data = !Array.isArray(dat) ? [dat] : dat;
+    if (['tsv','table','flat'].indexOf(format) > -1) options.rowDelimiter = '\t';
+
+    jsonexport(data, options, (err, csv) => {
+        if(err) return console.log(err);
+        cb(csv);
+    });
+  },
 
 };

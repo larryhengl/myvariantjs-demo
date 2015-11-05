@@ -11,7 +11,9 @@
     "start": "gulp"
   },
   "devDependencies": {
-    "babelify": "^6.1.2",
+    "babel-preset-es2015": "^6.0.15",
+    "babel-preset-react": "^6.0.15",
+    "babelify": "^7.2.0",
     "browser-sync": "^1.8.1",
     "browserify": "^7.0.3",
     "gulp": "^3.8.10",
@@ -24,13 +26,15 @@
     "watchify": "^2.2.1"
   },
   "dependencies": {
+    "baobab": "^2.1.0",
+    "baobab-react": "^1.0.0",
     "flat": "^1.6.0",
-    "immutable": "^3.7.5",
-    "json-2-csv": "^1.4.0",
-    "material-ui": "^0.12.3",
+    "jsonexport": "^1.0.6",
+    "material-ui": "^0.13.1",
     "myvariantjs": "file:../myvariantjs",
-    "react": "<0.14",
+    "react": "^0.14.2",
+    "react-dom": "^0.14.2",
     "react-material-icons": "^1.0.1",
-    "react-tap-event-plugin": "^0.1.3"
+    "react-tap-event-plugin": "^0.2.1"
   }
 }
