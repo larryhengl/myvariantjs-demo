@@ -68,6 +68,24 @@ let Query = React.createClass({
       showFieldList: false,
       colors: this.props.colors,
       actions: this.props.actions,
+      query: {
+        search: {
+          input: [{}],
+          output: {
+            fields: [],  // def='all'
+            size: null,
+            from: null
+          }
+        },
+        batch: {
+          input: null,  // 'term1,term2,term3'
+          output: {
+            fields: [],  // def='all'
+            size: null,
+            from: null
+          }
+        },
+      },
       qSearch: null,
       searchFields: {
         search: {'select0':{}},  // seeded. {'select0':{ name:'Weekly', value: <input>},'select1':{name:'Never', value:<input>}},
@@ -151,6 +169,7 @@ let Query = React.createClass({
     if (searchType === 'search') {
       let arr = [];
       let q;
+      let opts = {};
       if (this.state.qSearch) {
         q = this.state.qSearch;
       } else {
@@ -160,7 +179,11 @@ let Query = React.createClass({
         })
         q = arr.join(' AND ');
       }
-      return {'caller':'query','params':[q]};  // currently forcing ANDed terms
+      // attach the fields args if any
+      if (this.state.searchFields.output && this.state.searchFields.output.length) {
+        opts.fields = this.state.searchFields.output.join();
+      }
+      return {'caller':'query','params':[q,opts]};  // currently forcing ANDed terms
     }
     if (searchType === 'find') {
       return {'caller':'querymany','params':[this.state.qSearchMany,this.state.scopeFields]};
@@ -178,8 +201,8 @@ let Query = React.createClass({
       if (obj.search[k].hasOwnProperty('name') && !obj.search[k].name) accountedFor = false;
     }
     if (accountedFor) {
-        obj.search['select'+keyz.length] = null;
-        this.setState({'searchFields':obj})
+      obj.search['select'+keyz.length] = null;
+      this.setState({'searchFields':obj})
     }
   },
 
@@ -312,7 +335,7 @@ let Query = React.createClass({
 
       return (
         <div className="searchInputFields row">
-            <div className="col-xs-1 col-sm-1 col-md-1 col-lg-1" style={{'marginTop':'25px', 'marginRight':'10px'}} >
+            <div className="col-xs-1 col-sm-1 col-md-1 col-lg-1" style={{'marginTop':'25px', 'padding':'0px'}} >
               <RaisedButton
                 ref={'searchField'+i}
                 className={'searchField '+f}
@@ -324,7 +347,7 @@ let Query = React.createClass({
               </RaisedButton>
             </div>
 
-            <div className="col-xs-4 col-sm-4 col-md-4 col-lg-4" style={{'marginLeft':'10px', 'marginRight':'5%'}} >
+            <div className="col-xs-4 col-sm-4 col-md-4 col-lg-4 col-xs-offset-1 col-sm-offset-1 col-md-offset-1 col-lg-offset-1">
               <TextField
                 ref={'searchTermField'+i}
                 disabled={true}
@@ -344,7 +367,7 @@ let Query = React.createClass({
             </div>
 
             <DelIcon
-              className="del faded-grey col-xs-1 col-sm-1 col-md-1 col-lg-1"
+              className="del faded-grey col-xs-1 col-sm-1 col-md-1 col-lg-1 col-xs-offset-1 col-sm-offset-1 col-md-offset-1 col-lg-offset-1"
               style={{'marginTop':'40px'}}
               onTouchTap={self._removeSearchField.bind(null,f)} />
         </div>

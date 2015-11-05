@@ -134,8 +134,7 @@ body {
 /* -- Search --- */
 
 .query .searchInputFields {
-  margin-bottom: 10px !important;
-  margin-top: 20px !important;
+  margin: 20px 0px 10px 0px !important;
 }
 .query .searchInputFields .del:hover path{
   cursor: pointer;

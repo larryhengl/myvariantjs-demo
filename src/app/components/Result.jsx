@@ -161,7 +161,7 @@ let Result = React.createClass({
     const secondaryColor = this.context.muiTheme.flatButton.secondaryTextColor;
     const defaultColor = "#FFFFFF";
     return (
-          <div className="result right col-xs-12 col-sm-8 col-md-8 col-lg-8">
+          <div className="result">
 
             <h2>Results Preview</h2>
 
