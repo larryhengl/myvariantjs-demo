@@ -1,3 +1,5 @@
+'use strict';
+
 const React = require('react');
 const ReactDOM = require('react-dom');
 const flat = require('flat');
@@ -5,10 +7,10 @@ const mui = require('material-ui');
 const mv = require('myvariantjs');
 const utils = require('../utils');
 const mixins = require('baobab-react/mixins');
-//let Query = require('./Query.jsx');
-let ThemeManager = mui.Styles.ThemeManager;
+const Query = require('./Query.jsx');
+const ThemeManager = mui.Styles.ThemeManager;
 
-let Main = React.createClass({
+const Main = React.createClass({
   mixins: [mixins.root],
 
   childContextTypes: {
@@ -63,18 +65,15 @@ let Main = React.createClass({
               <span style={{color:'#b5b5b5'}}>
                 This is an experiment that tests the myvariantjs lib and incorparates some of the latest JS technologies:
                 <br/>
-                React, React Material UI, Gulp, Browserify, Babel (ES6)</span>
+                React, React Material UI, Baobab, Gulp, Browserify, Babel (ES6)</span>
             </h5>
             <a href="https://github.com/larryhengl/myvariantjs-demo" className="btn">View on GitHub</a>
           </section>
-          <section className="sub2">
-            <h1 className="project-name">Search <a href="http://myvariant.info/" target="_blank">MyVariant.info</a></h1>
-          </section>
         </section>
 
+        {/*  MAIN QUERY COMPONENT INSERTION POINT */}
         <section className="main-content row">
-          {/*  MAIN QUERY COMPONENT INSERTION POINT */}
-          { /* <Query /> */ }
+          <Query />
         </section>
 
         <section className="page-footer">

@@ -15,18 +15,17 @@ const tree = {
     Main: 'select',
     Query: 'input',
   },
-  previewFormat: 'table',
-  previewFormats: ['json','csv','tsv','table'],
+  dataFormat: 'table',
+  dataFormats: ['json','csv','tsv','table'],
   defaults: {
     tabs: {
       Main: 'select',
       Query: 'input',
     },
     output: {
-      fields: 'all',
+      fields: [],
       size: 10,
       from: 0,
-      scope: null,
     },
   },
   query: {
@@ -36,12 +35,13 @@ const tree = {
       results: null,
     },
     select: {
-      input: null,
+      input: [],
       output: null,
       results: null,
     },
     batch: {
       input: null,
+      scope: null,
       output: null,
       results: null,
     },
@@ -60,25 +60,51 @@ const tree = {
 
   activeQuery: monkey({
     cursors: {
-      main: ['activeTabs', 'Main'],
+      mainTab: ['activeTabs', 'Main'],
       query: ['query']
     },
     get: function(cur) {
-      return cur.query[cur.main];
+      return cur.query[cur.mainTab];
     }
   }),
 
   preview: monkey({
     cursors: {
       activeQuery: ['activeQuery'],
-      format: ['previewFormat'],
+      dataFormat: ['dataFormat'],
     },
     get: function(cur){
-      let cb = (data) => data;
+
+      //let cb = (data) => data;
       if (!cur.activeQuery.results) return null;
-      return utils._convert(cur.format, cur.activeQuery.results.slice(7), cb);
+      //return utils._convert(cur.dataFormat, cur.activeQuery.results.slice(7), cb);
+      return cur.activeQuery.results.slice(7);
     }
   }),
+
+  activeFields: monkey({
+    cursors: {
+      activeQuery: ['activeQuery'],
+      tabs: ['activeTabs'],
+    },
+    get: function(cur){
+      let fields = [];
+      if (cur.tabs.Query === 'input') {
+        if (cur.tabs.Main === 'batch') {
+          fields = cur.activeQuery[cur.tabs.Query].scope || [];
+        } else if (cur.tabs.Main === 'select') {
+          // pluck the field name
+          fields = cur.activeQuery[cur.tabs.Query].map(field => field.name);
+        }
+      } else if (cur.tabs.Query === 'output') {
+        if (cur.activeQuery[cur.tabs.Query] && cur.activeQuery[cur.tabs.Query].fields) {
+          fields = cur.activeQuery[cur.tabs.Query].fields;
+        }
+      }
+      return fields;
+    }
+  }),
+
 };
 
 tree.query.examples.data = [
