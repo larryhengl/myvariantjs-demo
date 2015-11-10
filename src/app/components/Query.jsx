@@ -13,7 +13,6 @@ const Card = mui.Card;
 const CardHeader = mui.CardHeader;
 const CardText = mui.CardText;
 
-
 import * as actions from '../actions.js';
 import Summary from './Summary.jsx';
 import Inputs from './Inputs.jsx';
@@ -34,8 +33,10 @@ const Query = React.createClass({
   },
 
   _setTab(t){
-    if (this.state.activeTabs.Main !== t)
+    if (this.state.activeTabs.Main !== t) {
       this.cursors.activeTabs.set('Main',t);
+      if (['passthru','examples'].indexOf(t) > -1) this.cursors.activeTabs.set('Query','input');    
+    }
   },
 
   render() {

@@ -30,13 +30,11 @@ const Inputs = React.createClass({
     // -------------------- RENDER --------------------------------------- //
     return (
       <div className={(this.state.tab==="input" ? "input query" : "hidey")}>
-{/*
-      <InputExact />
-      <InputSearch />
-      <InputBatch />
-      <InputPassThru />
-      <InputExamples />
-*/}
+        <InputExact />
+        <InputSearch />
+        <InputBatch />
+        <InputPassThru />
+        <InputExamples />
       </div>
     );
   },

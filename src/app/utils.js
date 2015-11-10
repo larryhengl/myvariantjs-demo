@@ -26,6 +26,10 @@ module.exports = {
 
     // null and undefined are "empty"
     if (obj == null) return true;
+    if (typeof obj === "undefined") return true;
+
+    // eval'd number
+    if (typeof obj === "number") return false;
 
     // Assume if it has a length property with a non-zero value
     // that that property is correct.

@@ -4,9 +4,14 @@ import React from 'react';
 const mixins = require('baobab-react/mixins');
 import mui from 'material-ui';
 const Paper = mui.Paper;
+const RadioButtonGroup = mui.RadioButtonGroup;
+const RadioButton = mui.RadioButton;
 const List = mui.List;
 const ListItem = mui.ListItem;
 const RaisedButton = mui.RaisedButton;
+const SelectField = mui.SelectField;
+const TextField = mui.TextField;
+
 const DelIcon = require('../svg-icons/del.jsx');
 
 import * as actions from '../actions.js';
@@ -36,17 +41,44 @@ const Outputs = React.createClass({
   actions: {
     removeField: actions.removeField,
     toggleFieldList: actions.toggleFieldList,
+    copyOutput: actions.copyOutput,
   },
 
   cursors: {
-    tab: ['activeTabs','Query'],
-    activeQuery: ['activeQuery'],    
+    tabs: ['activeTabs'],
+    activeQuery: ['activeQuery'],
+    query: ['query'],
+  },
+
+  getInitialState(){
+    return {
+      sizes: [
+          {name:'10',value:10},
+          {name:'50',value:50},
+          {name:'100',value:100},
+          {name:'1000',value:1000},
+          {name:'all',value:50000}
+        ]
+      };
+  },
+
+  _handleSizeChange(e){
+    this.cursors.query.select(this.state.tabs.Main,'output').set('size',e.target.value);
+  },
+
+  _handleFromChange(e){
+    this.cursors.query.select(this.state.tabs.Main,'output').set('from',+e.target.value);
+  },
+
+  _copyOutput(e,s){
+    this.actions.copyOutput(s);
   },
 
   render() {
     const self = this;
     const output = [];
-    if (self.state.tab==="output") {
+
+    if (self.state.tabs.Query==="output") {
       // construct the output fields list
       let outputFields = [];
       outputFields.push(<ListItem key={'outputAll'} className={'outputField'} primaryText={'All Fields'} />);
@@ -63,27 +95,80 @@ const Outputs = React.createClass({
       }
       // construct the output component contents
       output.push(
-        <div key={"outputs"}>
-          <div style={{marginTop: '20px', marginLeft: '47.5%'}}>
-            <RaisedButton
-              labelStyle={{'padding':'0px'}}
-              label={'+ Fields'}
-              primary={true}
-              onClick={self.actions.toggleFieldList} >
-            </RaisedButton>
+        <div key={"outputs"} className="row">
+
+          <div className="left col-xs-8 col-sm-8 col-md-8 col-lg-8">
+            <div className="row">
+              <div className="col-xs-8 col-sm-8 col-md-8 col-lg-8">
+                <h3>Limit Output to the Following Fields...</h3>
+              </div>
+              <div className="col-xs-4 col-sm-4 col-md-4 col-lg-4">
+                <RaisedButton
+                  labelStyle={{padding:'0px'}}
+                  style={{width: '100%'}}
+                  label={'+ Fields'}
+                  primary={true}
+                  onClick={self.actions.toggleFieldList} >
+                </RaisedButton>
+              </div>
+            </div>
+            <Paper style={{margin:'1% 0'}}>
+                <List>
+                  {outputFields}
+                </List>
+            </Paper>
+            <FieldListDialog source={"output"}/>
           </div>
-          <Paper style={{margin:'1% 20%'}}>
-              <List>
-                {outputFields}
-              </List>
-          </Paper>
-          <FieldListDialog />
+
+          <div className="right col-xs-4 col-sm-4 col-md-4 col-lg-4">
+            <Paper style={{padding: '20px'}}>
+              <p>Copy Output Settings From...</p>
+              <RadioButtonGroup
+                name="copiers"
+                defaultSelected={self.state.activeQuery.copyOutputFrom||'none'}
+                onChange={self._copyOutput} >
+                <RadioButton
+                  value="none"
+                  label="None"
+                  style={{marginBottom:2}} />
+                <RadioButton
+                  value="exact"
+                  label="Exact"
+                  style={{marginBottom:2}} />
+                <RadioButton
+                  value="search"
+                  label="Search"
+                  style={{marginBottom:2}} />
+                <RadioButton
+                  value="batch"
+                  label="Batch"
+                  style={{marginBottom:2}} />
+              </RadioButtonGroup>
+            </Paper>
+
+            <Paper style={{padding: '20px'}}>
+              <SelectField
+                ref="selectSize"
+                value={this.state.activeQuery.output.size}
+                onChange={this._handleSizeChange}
+                floatingLabelText="Select Row Batch Size"
+                valueMember="value"
+                displayMember="name"
+                menuItems={this.state.sizes} />
+
+              <TextField
+                hintText="Assign Page Size Offset (optional)"
+                floatingLabelText="Assign Page Size Offset (optional)"
+                value={this.state.activeQuery.output.from}
+                onChange={this._handleFromChange} />
+            </Paper>
+          </div>
         </div>
       )
     }
 
     return (
-      <div className={(self.state.tab==="output" ? "output" : "hidey")} >
+      <div className={(self.state.tabs.Query==="output" ? "output" : "hidey")} >
        {output}
       </div>
     )

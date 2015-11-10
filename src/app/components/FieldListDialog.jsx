@@ -29,6 +29,7 @@ const FieldList = React.createClass({
   },
   actions: {
     addField: actions.addField,
+    addSearchField: actions.addSearchField,
     toggleFieldList: actions.toggleFieldList
   },
   cursors: {
@@ -49,6 +50,20 @@ const FieldList = React.createClass({
     });
   },
 
+  shouldComponentUpdate(nextProps,nextState){
+    if (nextState.fields !== this.state.fields) {
+      this.setState({
+        filteredData: nextState.fields || []
+      });
+      return true;
+    }
+    else if (
+      nextState.showFieldList !== this.state.showFieldList ||
+      nextState.activeFields !== this.state.activeFields
+    ) return true;
+    else return false;
+  },
+
   componentDidUpdate(){
     if (this.state.showFieldList) this.refs.fieldsDialog.show();
   },
@@ -63,6 +78,15 @@ const FieldList = React.createClass({
     this.setState({
       filteredData: filtered,
     });
+  },
+
+  _selectField(field){
+    //const action = self.props.source === "input" ? self.actions.addSearchField.bind(null, f.fieldname) : self.actions.addField.bind(null,{idx: i, name: f.fieldname});
+    this.actions.addField(field);
+    if (this.props.source === "input") {
+      this.actions.addSearchField(field);
+      this.refs.fieldsDialog.dismiss();
+    }
   },
 
   render() {
@@ -80,7 +104,7 @@ const FieldList = React.createClass({
       let dots = f.fieldname.split(".").length - 1;
       let isSelected = self.state.activeFields.indexOf(f.fieldname) > -1; // is it in the mapped set?
       return (
-          <div key={"field"+i} className={"row"+(isSelected ? " selected" : "")} onClick={self.actions.addField.bind(null,{idx: i, name: f.fieldname})} >
+          <div key={"field"+i} className={"row"+(isSelected ? " selected" : "")} onClick={self._selectField.bind(null,{idx: i, name: f.fieldname})} >
             <div className="col-xs-11 col-sm-11 col-md-11 col-lg-11 col-xs-offset-1 col-sm-offset-1 col-md-offset-1 col-lg-offset-1">
               <span>{dotSpaces(dots)}{ dots > 0 && <span><MoreVertIcon/><MoreHorizIcon style={{marginBottom: '-7px',marginLeft: '-10px'}}/></span>}<span title={f.notes}>{f.fieldname}</span></span>
             </div>

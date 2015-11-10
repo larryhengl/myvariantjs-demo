@@ -30,6 +30,7 @@ const Main = React.createClass({
     customTheme.textField.floatingLabelColor = colors.blue;
     customTheme.textField.focusColor = colors.blue;
     customTheme.textField.borderColor = colors.blue;
+    customTheme.radioButton.checkedColor = colors.green;
 
     return {
       muiTheme: customTheme

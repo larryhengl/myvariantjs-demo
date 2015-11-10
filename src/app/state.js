@@ -11,15 +11,16 @@ const tree = {
   },
   fields: null,
   showFieldList: false,
+  fieldCursor: null,
   activeTabs: {
-    Main: 'select',
+    Main: 'search',
     Query: 'input',
   },
   dataFormat: 'table',
   dataFormats: ['json','csv','tsv','table'],
   defaults: {
     tabs: {
-      Main: 'select',
+      Main: 'search',
       Query: 'input',
     },
     output: {
@@ -32,17 +33,21 @@ const tree = {
     exact: {
       input: null,
       output: null,
+      copyOutputFrom: null,
       results: null,
     },
-    select: {
-      input: [],
+    search: {
+      q: null,
+      input: [{name:null,value:null}],
       output: null,
+      copyOutputFrom: null,
       results: null,
     },
     batch: {
       input: null,
       scope: null,
       output: null,
+      copyOutputFrom: null,
       results: null,
     },
     passthru: {
@@ -54,6 +59,7 @@ const tree = {
       input: null,
       data: null,
       lastExample: null,
+      output: null,
       results: null,
     },
   },
@@ -74,7 +80,6 @@ const tree = {
       dataFormat: ['dataFormat'],
     },
     get: function(cur){
-
       //let cb = (data) => data;
       if (!cur.activeQuery.results) return null;
       //return utils._convert(cur.dataFormat, cur.activeQuery.results.slice(7), cb);
@@ -91,8 +96,8 @@ const tree = {
       let fields = [];
       if (cur.tabs.Query === 'input') {
         if (cur.tabs.Main === 'batch') {
-          fields = cur.activeQuery[cur.tabs.Query].scope || [];
-        } else if (cur.tabs.Main === 'select') {
+          fields = cur.activeQuery.scope || [];
+        } else if (cur.tabs.Main === 'search') {
           // pluck the field name
           fields = cur.activeQuery[cur.tabs.Query].map(field => field.name);
         }
@@ -118,9 +123,10 @@ tree.query.examples.data = [
 ];
 
 tree.query.exact.output = Object.assign(tree.defaults.output);
-tree.query.select.output = Object.assign(tree.defaults.output);
+tree.query.search.output = Object.assign(tree.defaults.output);
 tree.query.batch.output = Object.assign(tree.defaults.output);
 tree.query.passthru.output = Object.assign(tree.defaults.output);
+tree.query.examples.output = Object.assign(tree.defaults.output);
 
 
 module.exports = new Baobab(tree);

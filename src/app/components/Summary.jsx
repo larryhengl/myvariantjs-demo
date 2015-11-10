@@ -18,6 +18,7 @@ const Summary = React.createClass({
   cursors: {
     mainTab: ['activeTabs','Main'],
     queryTab: ['activeTabs','Query'],
+    activeQuery: ['activeQuery'],
   },
 
   _setTab(t,e){
@@ -33,6 +34,14 @@ const Summary = React.createClass({
   },
 
   render() {
+    let output = [];
+    if (this.state.activeQuery.output.fields && this.state.activeQuery.output.fields.length) {
+      output.push(<span key="det0" className="details">fields: {this.state.activeQuery.output.fields.join()}</span>);
+      output.push(<span key="det1" className="details">size: {this.state.activeQuery.output.size}</span>);
+      output.push(<span key="det2" className="details">from: {this.state.activeQuery.output.from}</span>);
+    } else {
+      output.push(<span key="det0" className="centered">Define Output Fields?</span>);
+    }
     return (
       <div className="summary row">
         <div className="summary-masthead inactive summary-block col-xs-3 col-sm-3 col-md-3 col-lg-3">
@@ -44,7 +53,7 @@ const Summary = React.createClass({
         </div>
         <div className={"summary-output summary-block col-xs-3 col-sm-3 col-md-3 col-lg-3"+ this._setActive('output')} onTouchTap={this._setTab.bind(null,'output')}>
           <h3>Output</h3>
-          <span className="centered">Define Output Fields?</span>
+          {output}
         </div>
         <div className={"summary-results summary-block col-xs-3 col-sm-3 col-md-3 col-lg-3"+ this._setActive('results')} onTouchTap={this._setTab.bind(null,'results')}>
           <h3>Results</h3>
