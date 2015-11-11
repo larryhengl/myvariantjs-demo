@@ -50,6 +50,7 @@ module.exports = {
     let options = {};
     let data = !Array.isArray(dat) ? [dat] : dat;
     if (['tsv','table','flat'].indexOf(format) > -1) options.rowDelimiter = '\t';
+    if (['csv'].indexOf(format) > -1) options.rowDelimiter = ',';
 
     jsonexport(data, options, (err, csv) => {
         if(err) return console.log(err);

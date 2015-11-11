@@ -48,6 +48,7 @@ const Outputs = React.createClass({
     tabs: ['activeTabs'],
     activeQuery: ['activeQuery'],
     query: ['query'],
+    copyOutputFrom: ['copyOutputFrom'],
   },
 
   getInitialState(){
@@ -71,7 +72,11 @@ const Outputs = React.createClass({
   },
 
   _copyOutput(e,s){
-    this.actions.copyOutput(s);
+    if (e==='defaults') {
+      this.actions.copyOutput(e);
+    } else {
+      this.actions.copyOutput(s);
+    }
   },
 
   render() {
@@ -79,6 +84,7 @@ const Outputs = React.createClass({
     const output = [];
 
     if (self.state.tabs.Query==="output") {
+
       // construct the output fields list
       let outputFields = [];
       outputFields.push(<ListItem key={'outputAll'} className={'outputField'} primaryText={'All Fields'} />);
@@ -125,12 +131,8 @@ const Outputs = React.createClass({
               <p>Copy Output Settings From...</p>
               <RadioButtonGroup
                 name="copiers"
-                defaultSelected={self.state.activeQuery.copyOutputFrom||'none'}
+                defaultSelected={self.state.activeQuery.copyOutputFrom || ""}
                 onChange={self._copyOutput} >
-                <RadioButton
-                  value="none"
-                  label="None"
-                  style={{marginBottom:2}} />
                 <RadioButton
                   value="exact"
                   label="Exact"
@@ -152,6 +154,7 @@ const Outputs = React.createClass({
                 value={this.state.activeQuery.output.size}
                 onChange={this._handleSizeChange}
                 floatingLabelText="Select Row Batch Size"
+                fullWidth={true}
                 valueMember="value"
                 displayMember="name"
                 menuItems={this.state.sizes} />
@@ -159,8 +162,18 @@ const Outputs = React.createClass({
               <TextField
                 hintText="Assign Page Size Offset (optional)"
                 floatingLabelText="Assign Page Size Offset (optional)"
+                fullWidth={true}
                 value={this.state.activeQuery.output.from}
                 onChange={this._handleFromChange} />
+
+              <RaisedButton
+                labelStyle={{padding:'0px'}}
+                style={{width: '100%', marginTop: '20px'}}
+                label={'Reset'}
+                primary={true}
+                onClick={self._copyOutput.bind(null,'defaults')} >
+              </RaisedButton>
+
             </Paper>
           </div>
         </div>

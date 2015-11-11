@@ -25,17 +25,25 @@ const Query = React.createClass({
   contextTypes: {
     muiTheme: React.PropTypes.object,
   },
-  // Mapping baobab cursors
+
+  actions: {
+    //setWatchers: actions.setWatchers,
+  },
+
   cursors: {
     colors: ['colors'],
     activeTabs: ['activeTabs'],
     activeQuery: ['activeQuery'],
   },
 
+  componentDidMount(){
+    //this.actions.setWatchers;
+  },
+
   _setTab(t){
     if (this.state.activeTabs.Main !== t) {
       this.cursors.activeTabs.set('Main',t);
-      if (['passthru','examples'].indexOf(t) > -1) this.cursors.activeTabs.set('Query','input');    
+      if (['passthru','examples'].indexOf(t) > -1 && this.state.activeTabs.Query === 'output') this.cursors.activeTabs.set('Query','input');
     }
   },
 

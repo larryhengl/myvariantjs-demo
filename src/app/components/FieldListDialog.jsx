@@ -59,7 +59,8 @@ const FieldList = React.createClass({
     }
     else if (
       nextState.showFieldList !== this.state.showFieldList ||
-      nextState.activeFields !== this.state.activeFields
+      nextState.activeFields !== this.state.activeFields ||
+      nextState.filteredData.length !== this.state.filteredData.length
     ) return true;
     else return false;
   },
@@ -69,15 +70,21 @@ const FieldList = React.createClass({
   },
 
   _filterData(event) {
-    event.preventDefault();
     const regex = new RegExp(event.target.value, 'i');
-    let filtered = this.state.fields.filter(function(f) {
-      return (f.fieldname.search(regex) > -1);
-    });
-
+    let filtered = this.state.fields.filter( f => f.fieldname.search(regex) > -1 );
     this.setState({
       filteredData: filtered,
     });
+  },
+
+  _clearFilter(){
+/*
+    this.setState({
+      filteredData: this.state.fields,
+    },this.actions.toggleFieldList);
+*/
+    this.refs.refDialogInput.value = null;
+    //this.actions.toggleFieldList
   },
 
   _selectField(field){
@@ -124,6 +131,7 @@ const FieldList = React.createClass({
             <div className="row" style={{padding:'20px 25px'}}>
               <div className="col-sm-4 col-md-4 col-lg-3">Select a Field</div>
               <input
+                ref="refDialogInput"
                 type="text"
                 className="list-filter-input form-control col-sm-8 col-md-8 col-lg-9"
                 onChange={this._filterData}
@@ -133,7 +141,7 @@ const FieldList = React.createClass({
           actions={[{ text: 'Done' }]}
           autoDetectWindowHeight={true}
           autoScrollBodyContent={true}
-          onDismiss={this.actions.toggleFieldList}
+          onDismiss={this._clearFilter}
           modal={true}>
           <div className="fieldsDialog" style={{height: '1000px'}}>
             { prettyRows }

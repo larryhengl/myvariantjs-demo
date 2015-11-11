@@ -31,6 +31,8 @@ const SearchInput = React.createClass({
     removeSearchField: actions.removeSearchField,
     clearInput: actions.clearInput,
     setFieldCursor: actions.setFieldCursor,
+    formatRequest: actions.formatRequest,
+    fetchData: actions.fetchData,
   },
 
   cursors: {
@@ -50,22 +52,21 @@ const SearchInput = React.createClass({
     // if ref=searchFieldTerm then look and add to input array
     if (i.source === 'search') {
       this.cursors.search.select(i.idx,'value').set(e.target.value);
-    } else if (i.source === 'q') {
+    } else if (i.source === 'search.q') {
       this.cursors.q.set(e.target.value);
     }
   },
 
 
   _handleSubmit(searchType){
-debugger
-    this.actions._fetchData(this._formatRequest(searchType));
+    this.actions.fetchData(this.actions.formatRequest(searchType));
   },
 
   render() {
     const self = this;
     const input = [];
 
-    if (self.state.tabs.Query==="input") {
+    if (self.state.tabs.Main==="search" && self.state.tabs.Query==="input") {
 
       // -------------------- SEARCH FIELDS ------------------------------- //
       let searchInputFields = self.state.search.map(function(f,i){
@@ -128,6 +129,10 @@ debugger
               </div>
             </CardText>
 
+           <div style={{position:'relative'}}>
+             <div className="or">Or</div>
+             <hr/>
+           </div>
 
             <CardText>
               <div className='qSearch'>
@@ -154,13 +159,20 @@ debugger
             <CardText>
               <div className="search-notes">
                <h3>Notes</h3>
-                <p>If running a general search without field names, it will be limited to rsid and hgvs names.</p>
                 <p>Wildcard character “*” or ”?” is supported in either simple queries or fielded queries:</p>
                 <pre>
                   <p>dbnsfp.genename:CDK?</p>
                   <p>dbnsfp.genename:CDK*</p>
                 </pre>
                 <p>Wildcard character can not be the first character. It will be ignored.</p>
+                <br/>
+                <p>If running a general search without field names, it will be limited to rsid and hgvs names.</p>
+                <pre>
+                  <p>rs58991260</p>
+                  <p>c.1112C>G</p>
+                  <p>chr1:69000-70000</p>
+                </pre>
+                <p>The detailed query syntax can be found <a href="http://docs.myvariant.info/en/latest/doc/variant_query_service.html#query-syntax">here</a></p>
               </div>
             </CardText>
           </Card>

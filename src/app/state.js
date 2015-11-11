@@ -35,6 +35,7 @@ const tree = {
       output: null,
       copyOutputFrom: null,
       results: null,
+      error: false,
     },
     search: {
       q: null,
@@ -42,6 +43,7 @@ const tree = {
       output: null,
       copyOutputFrom: null,
       results: null,
+      error: false,
     },
     batch: {
       input: null,
@@ -49,11 +51,13 @@ const tree = {
       output: null,
       copyOutputFrom: null,
       results: null,
+      error: false,
     },
     passthru: {
       input: null,
       output: null,
       results: null,
+      error: false,
     },
     examples: {
       input: null,
@@ -61,6 +65,7 @@ const tree = {
       lastExample: null,
       output: null,
       results: null,
+      error: false,
     },
   },
 
@@ -80,10 +85,8 @@ const tree = {
       dataFormat: ['dataFormat'],
     },
     get: function(cur){
-      //let cb = (data) => data;
       if (!cur.activeQuery.results) return null;
-      //return utils._convert(cur.dataFormat, cur.activeQuery.results.slice(7), cb);
-      return cur.activeQuery.results.slice(7);
+      return cur.activeQuery.results.slice(0,7);
     }
   }),
 

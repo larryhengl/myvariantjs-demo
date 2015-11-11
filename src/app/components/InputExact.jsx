@@ -27,6 +27,8 @@ const ExactInput = React.createClass({
     removeSearchField: actions.removeSearchField,
     clearInput: actions.clearInput,
     setFieldCursor: actions.setFieldCursor,
+    formatRequest: actions.formatRequest,
+    fetchData: actions.fetchData,
   },
 
   cursors: {
@@ -34,27 +36,20 @@ const ExactInput = React.createClass({
     input: ['query','exact','input'],
   },
 
-  _handleInputChange(i,e){
-    // if ref=searchTerm then set the cursors.query.search.q e.target.value
-    // if ref=searchFieldTerm then look and add to input array
-    if (i.source === 'search') {
-      this.cursors.search.select(i.idx,'value').set(e.target.value);
-    } else if (i.source === 'q') {
-      this.cursors.q.set(e.target.value);
-    }
+  _handleInputChange(e){
+    this.cursors.input.set(e.target.value);
   },
 
 
   _handleSubmit(searchType){
-debugger
-    this.actions._fetchData(this._formatRequest(searchType));
+    this.actions.fetchData(this.actions.formatRequest(searchType));
   },
 
   render() {
     const self = this;
     const input = [];
 
-    if (self.state.tabs.Query==="input") {
+    if (self.state.tabs.Main==="exact" && self.state.tabs.Query==="input") {
       // construct the input component contents
       input.push(
         <div key={"inputall"}>
@@ -73,11 +68,11 @@ debugger
                 </div>
 
                 <TextField
-                  ref={'searchTerm'}
+                  ref={'exactTerm'}
                   hintText="Search"
-                  floatingLabelText="Enter VariantIDs"
+                  floatingLabelText="Enter HGVS VariantIDs"
                   fullWidth={true}
-                  onChange={self._handleInputChange.bind(null,{source: 'exact'})}
+                  onChange={self._handleInputChange}
                   value={self.state.input} />
               </div>
             </CardText>
@@ -85,13 +80,14 @@ debugger
             <CardText>
               <div className="search-notes">
                <h3>Notes</h3>
-                <p>If running a general search without field names, it will be limited to rsid and hgvs names.</p>
-                <p>Wildcard character “*” or ”?” is supported in either simple queries or fielded queries:</p>
+                <p>For Exact searches, you retrieve variant annotations based on HGVS name based ids.</p>
                 <pre>
-                  <p>dbnsfp.genename:CDK?</p>
-                  <p>dbnsfp.genename:CDK*</p>
+                  <p>chr9:g.107620835G>A</p>
                 </pre>
-                <p>Wildcard character can not be the first character. It will be ignored.</p>
+                <p>You can enter multiple ids separated by a comma.</p>
+                <pre>
+                  <p>chr1:g.866422C>T,chr1:g.876664G>A,chr1:g.69635G>C</p>
+                </pre>
               </div>
             </CardText>
           </Card>

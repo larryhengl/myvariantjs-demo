@@ -17,20 +17,19 @@ const HelpIcon = require('../svg-icons/help-outline.jsx');
 
 const FormatResults = React.createClass({
   render(){
-    var comp;
+    var comp = [];
     if (this.props.dataFormat==='table') {
       if (!this.props.data || (Array.isArray(this.props.data) && !this.props.data.length)) {
-        comp = <div className="center-xs ">-- No results --<br/><br/>Run a new search.<br/>Find variants that satisfy specific field values.<br/>Or hit one of the example queries.</div>;
+        comp.push(<div className="center-xs ">-- No results --<br/><br/>Run a new search.<br/>Find variants that satisfy specific field values.<br/>Or hit one of the example queries.</div>);
       } else {
-        // chop to 7 rows for preview
-        comp = <ResultTable ref="resulttable" datas={this.props.data} format={this.props.dataFormat}/>;
+        comp.push(<ResultTable ref="resulttable" datas={this.props.data} format={this.props.dataFormat}/>);
       }
     }
     if (this.props.dataFormat==='json') {
-      comp = <div className="code-view" ref="page"><pre class="javascript"><code>{JSON.stringify(this.props.data,null,2)}</code></pre></div>;
+      comp.push(<div className="code-view" ref="page"><pre class="javascript"><code>{JSON.stringify(this.props.data,null,2)}</code></pre></div>);
     }
     if (['csv','tsv'].indexOf(this.props.dataFormat) > -1) {
-      comp = <div className="code-view" ref="page"><span><pre><code>{this.props.data}</code></pre></span></div>;
+      comp.push(<div className="code-view" ref="page"><span><pre><code>{this.props.data}</code></pre></span></div>);
     }
     return (
       <div>
@@ -52,8 +51,8 @@ const Preview = React.createClass({
     colors: ['colors'],
     isLoading: ['isLoading'],
     dataFormat: ['dataFormat'],
-    results: ['activeQuery','results'],
     preview: ['preview'],
+    activeQuery: ['activeQuery'],
   },
 
   getInitialState(){
@@ -69,18 +68,19 @@ const Preview = React.createClass({
   },
 
   _onFormatTap(format) {
-    if (format && format !== this.state.dataFormat)
+    if (format && format !== this.state.dataFormat) {
+      this.cursors.dataFormat.set(format);
+      this.context.tree.commit();
       this._convertFormat(format);
+    }
   },
 
   _convertFormat(format){
-    // set the format
-    this.cursors.dataFormat.set(format);
     // convert the preview data
-    if (format === 'json') {
+    if (['json','table'].indexOf(format) > -1) {
       this.setState({'data':this.state.preview});
     } else {
-      utils._convert(format, this.state.preview, (data) => this.setState(data));
+      utils._convert(format, this.state.preview, (data) => this.setState({'data':data}));
     }
   },
 
@@ -95,9 +95,9 @@ const Preview = React.createClass({
     };
 
     if (this.state.dataFormat === 'json') {
-      cb(JSON.stringify(this.state.results));
+      cb(JSON.stringify(this.state.activeQuery.results));
     } else {
-      utils._convert(this.state.dataFormat, this.state.results, cb);
+      utils._convert(this.state.dataFormat, this.state.activeQuery.results, cb);
     }
   },
 
@@ -106,6 +106,7 @@ const Preview = React.createClass({
   },
 
   render() {
+console.log('data',this.state.data)
     const greenBorder = '2px solid '+this.state.colors.green;
     return (
           <div className="result">

@@ -80,12 +80,13 @@ let ResultTable = React.createClass({
     let cols = this._getColumns();
     let rows = this.props.datas.map( (r,i) => {
       let row = cols.map( (c,ii) => {
-        let rowcol = c === "notes" ?
-            <TableRowColumn key={ii} dangerouslySetInnerHTML={{__html: r[c]}}></TableRowColumn> :
-            <TableRowColumn key={ii}>{r[c]}</TableRowColumn>;
-        return (
-            {rowcol}
-        );
+        let rowcol = [];
+        if (c === 'notes') {
+          rowcol.push(<TableRowColumn key={ii} dangerouslySetInnerHTML={{__html: r[c]}}></TableRowColumn>);
+        } else {
+          rowcol.push(<TableRowColumn key={ii}>{r[c]}</TableRowColumn>);
+        }
+        return rowcol;
       });
       // add the More icon at end of row
       row.push(<TableRowColumn key={"colMore"} >
@@ -133,7 +134,7 @@ let ResultTable = React.createClass({
           <TableHeader enableSelectAll={this.state.enableSelectAll}>
             <TableRow key={"sprhdrrows"}>
               <TableHeaderColumn colSpan={this._getColumns().length+1} tooltip="Search Results" style={{textAlign: "center"}}>
-                Results ({rows.length} rows)
+                Preview Results ({rows.length + 'row' + (rows.length > 1 ? 's' : '')} )
               </TableHeaderColumn>
             </TableRow>
 
