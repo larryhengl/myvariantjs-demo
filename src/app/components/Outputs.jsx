@@ -8,6 +8,7 @@ const RadioButtonGroup = mui.RadioButtonGroup;
 const RadioButton = mui.RadioButton;
 const List = mui.List;
 const ListItem = mui.ListItem;
+const FlatButton = mui.FlatButton;
 const RaisedButton = mui.RaisedButton;
 const SelectField = mui.SelectField;
 const TextField = mui.TextField;
@@ -39,6 +40,7 @@ const Outputs = React.createClass({
   },
 
   actions: {
+    clearInput: actions.clearInput,
     removeField: actions.removeField,
     toggleFieldList: actions.toggleFieldList,
     copyOutput: actions.copyOutput,
@@ -77,6 +79,10 @@ const Outputs = React.createClass({
     } else {
       this.actions.copyOutput(s);
     }
+  },
+
+  _handleSubmit(searchType){
+    this.actions.fetchData(this.actions.formatRequest(searchType));
   },
 
   render() {
@@ -166,13 +172,10 @@ const Outputs = React.createClass({
                 value={this.state.activeQuery.output.from}
                 onChange={this._handleFromChange} />
 
-              <RaisedButton
-                labelStyle={{padding:'0px'}}
-                style={{width: '100%', marginTop: '20px'}}
-                label={'Reset'}
-                primary={true}
-                onClick={self._copyOutput.bind(null,'defaults')} >
-              </RaisedButton>
+              <div className='row outputButtons'>
+                <FlatButton ref="btnSubmit" className="btnSubmit col-xs-6 col-sm-6 col-md-6 col-lg-6" label="Re-Submit Search" secondary={true} onTouchTap={self._handleSubmit.bind(null, this.state.tabs.Main)} />
+                <FlatButton ref="btnReset" className="btnReset col-xs-6 col-sm-6 col-md-6 col-lg-6" label="Reset" secondary={true} onTouchTap={self._copyOutput.bind(null,'defaults')} />
+              </div>
 
             </Paper>
           </div>

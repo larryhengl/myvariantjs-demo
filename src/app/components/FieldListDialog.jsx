@@ -6,7 +6,6 @@ const mui = require('material-ui');
 const Dialog = mui.Dialog;
 const SvgIcon = mui.SvgIcon;
 const MoreVertIcon = require('../svg-icons/more-vert.jsx');
-//const ArrowRightIcon = require('../svg-icons/arrow-forward.jsx');
 const MoreHorizIcon = require('../svg-icons/more-horiz.jsx');
 
 import * as actions from '../actions.js';
@@ -67,28 +66,24 @@ const FieldList = React.createClass({
 
   componentDidUpdate(){
     if (this.state.showFieldList) this.refs.fieldsDialog.show();
-  },
-
-  _filterData(event) {
-    const regex = new RegExp(event.target.value, 'i');
-    let filtered = this.state.fields.filter( f => f.fieldname.search(regex) > -1 );
-    this.setState({
-      filteredData: filtered,
-    });
+    else this._clearFilter();
   },
 
   _clearFilter(){
-/*
     this.setState({
-      filteredData: this.state.fields,
-    },this.actions.toggleFieldList);
-*/
-    this.refs.refDialogInput.value = null;
-    //this.actions.toggleFieldList
+      filteredData: this.state.fields
+    });
+  },
+
+  _filterData(event){
+    const regex = new RegExp(event.target.value, 'i');
+    let filtered = this.state.fields.filter( f => f.fieldname.search(regex) > -1 );
+    this.setState({
+      filteredData: filtered
+    });
   },
 
   _selectField(field){
-    //const action = self.props.source === "input" ? self.actions.addSearchField.bind(null, f.fieldname) : self.actions.addField.bind(null,{idx: i, name: f.fieldname});
     this.actions.addField(field);
     if (this.props.source === "input") {
       this.actions.addSearchField(field);
@@ -141,7 +136,7 @@ const FieldList = React.createClass({
           actions={[{ text: 'Done' }]}
           autoDetectWindowHeight={true}
           autoScrollBodyContent={true}
-          onDismiss={this._clearFilter}
+          onDismiss={this.actions.toggleFieldList}
           modal={true}>
           <div className="fieldsDialog" style={{height: '1000px'}}>
             { prettyRows }

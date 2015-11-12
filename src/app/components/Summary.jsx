@@ -37,13 +37,14 @@ const Summary = React.createClass({
   },
 
   render() {
-//debugger
     // summarize inputs
     let input = [];
 
     if (this.state.activeQuery.input) {
       if (Array.isArray(this.state.activeQuery.input)) {
-        if (this.state.activeQuery.input.length && this.state.activeQuery.input[0].name) {
+        if (this.state.activeQuery.q) {
+          input.push(<span key="details" className="details">{this.state.activeQuery.q}</span>);
+        } else if (this.state.activeQuery.input.length && this.state.activeQuery.input[0].name) {
           let inputs = this.state.activeQuery.input.filter(inp => inp.name).map((inp,i) => {
               return <div key={"det"+i} className="details"><span>{inp.name}: {inp.value}</span></div>;
           });

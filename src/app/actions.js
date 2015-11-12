@@ -141,11 +141,14 @@ export function fetchData(tree,exampleN) {
     // if string then do an example lookup, otherwise assume the obj passed is an example obj.
     if (typeof exampleN === 'string') {
       // if same example then kick out.
-      if (exampleN === tree.activeQuery.lastExample) return;
-      example = tree.query.examples.data[exampleN];
+      let lastExample = tree.get('activeQuery','lastExample');
+      if (exampleN === lastExample) return;
+      example = tree.get('query','examples','data')[exampleN];
+      tree.select('query','examples','lastExample').set(exampleN);
     }
 
     tree.set('isLoading',true);
+    tree.commit();
 
     let got = example.params === null ? mv[example.caller]() : mv[example.caller](...example.params);
     got.then(

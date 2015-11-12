@@ -67,6 +67,14 @@ const Preview = React.createClass({
     });
   },
 
+  componentDidUpdate(previousProps,previousState){
+    if (this.state.preview !== previousState.preview) {
+      this.setState({
+        data: this.state.preview
+      });
+    }
+  },
+
   _onFormatTap(format) {
     if (format && format !== this.state.dataFormat) {
       this.cursors.dataFormat.set(format);
@@ -106,7 +114,6 @@ const Preview = React.createClass({
   },
 
   render() {
-console.log('data',this.state.data)
     const greenBorder = '2px solid '+this.state.colors.green;
     return (
           <div className="result">

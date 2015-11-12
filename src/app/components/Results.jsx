@@ -19,13 +19,13 @@ const Results = React.createClass({
   },
 
   cursors: {
-    tab: ['activeTabs','Query'],
+    tabs: ['activeTabs'],
     //results: ['activeQuery','results'],
   },
 
   render() {
     let results = [];
-    if (this.state.tab==="results") {
+    if (this.state.tabs.Query==="results") {
       //if (!this.state.results) {
       //  results.push(<p className="centered">No results yet.  Run a search!</p>)
       //} else if (this.state.results.length === 0) {
@@ -36,7 +36,7 @@ const Results = React.createClass({
     }
 
     return (
-      <div className={(this.state.tab==="results" ? "results" : "hidey")} >
+      <div className={(this.state.tabs.Query==="results" ? "results" : "hidey")} >
         {results}
       </div>
     )

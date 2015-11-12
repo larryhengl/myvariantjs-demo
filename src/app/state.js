@@ -13,14 +13,14 @@ const tree = {
   showFieldList: false,
   fieldCursor: null,
   activeTabs: {
-    Main: 'search',
+    Main: 'examples',
     Query: 'input',
   },
   dataFormat: 'table',
   dataFormats: ['json','csv','tsv','table'],
   defaults: {
     tabs: {
-      Main: 'search',
+      Main: 'exact',
       Query: 'input',
     },
     output: {

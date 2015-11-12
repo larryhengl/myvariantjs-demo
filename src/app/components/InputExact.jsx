@@ -62,7 +62,7 @@ const ExactInput = React.createClass({
                     <h3>Simple Search</h3>
                   </div>
                   <div className='col-xs-8 col-sm-8 col-md-8 col-lg-8'>
-                    <FlatButton ref="btnClear" className="btnClear" label="Clear Search Inputs" secondary={true} onTouchTap={self.actions.clearInput.bind(null,'exact')} />
+                    <FlatButton ref="btnClear" className="btnClear" label="Clear" secondary={true} onTouchTap={self.actions.clearInput.bind(null,'exact')} />
                     <FlatButton ref="btnSubmit" className="btnSubmit" label="Submit" secondary={true} onTouchTap={self._handleSubmit.bind(null,'exact')} />
                   </div>
                 </div>

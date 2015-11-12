@@ -1,6 +1,7 @@
 'use strict';
 
 import React from 'react';
+const ReactDOM = require('react-dom');
 import mui from 'material-ui';
 const mixins = require('baobab-react/mixins');
 const Card = mui.Card;
@@ -44,6 +45,13 @@ const SearchInput = React.createClass({
 
   _openFieldList(fieldIdx){
     this.actions.setFieldCursor(fieldIdx);
+    this.actions.toggleFieldList();
+  },
+
+  _closeFieldList(){
+    this.actions.setFieldCursor(null);
+    let mountNode = ReactDOM.findDOMNode(this.refs.fieldsDialog);
+    let unmount = ReactDOM.unmountComponentAtNode(mountNode);
     this.actions.toggleFieldList();
   },
 
@@ -121,7 +129,7 @@ const SearchInput = React.createClass({
                     <h3>Field Search</h3>
                   </div>
                   <div className='col-xs-8 col-sm-8 col-md-8 col-lg-8'>
-                    <FlatButton ref="btnClear" className="btnClear" label="Clear Search Inputs" secondary={true} onTouchTap={self.actions.clearInput.bind(null,'search')} />
+                    <FlatButton ref="btnClear" className="btnClear" label="Clear" secondary={true} onTouchTap={self.actions.clearInput.bind(null,'search')} />
                     <FlatButton ref="btnSubmit" className="btnSubmit" label="Submit" secondary={true} onTouchTap={self._handleSubmit.bind(null,'search')} />
                   </div>
                 </div>
@@ -141,7 +149,7 @@ const SearchInput = React.createClass({
                     <h3>Simple Search</h3>
                   </div>
                   <div className='col-xs-8 col-sm-8 col-md-8 col-lg-8'>
-                    <FlatButton ref="btnClear" className="btnClear" label="Clear Search Inputs" secondary={true} onTouchTap={self.actions.clearInput.bind(null,'search.q')} />
+                    <FlatButton ref="btnClear" className="btnClear" label="Clear" secondary={true} onTouchTap={self.actions.clearInput.bind(null,'search.q')} />
                     <FlatButton ref="btnSubmit" className="btnSubmit" label="Submit" secondary={true} onTouchTap={self._handleSubmit.bind(null,'search.q')} />
                   </div>
                 </div>
@@ -177,7 +185,7 @@ const SearchInput = React.createClass({
             </CardText>
           </Card>
 
-          <FieldListDialog source={"input"} />
+          <FieldListDialog ref="fieldListDialog" source={"input"} close={this._closeFieldList}/>
         </div>
       )
 
