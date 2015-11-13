@@ -9,111 +9,77 @@ body {
 .hidey {
   display: none;
 }
-
-
-@-webkit-keyframes slideUp,
-@keyframes slideUp {
-    from {
-      height: 350px;
-      overflow: hidden;
-    }
-    to {
-      height: 115px;
-      overflow: hidden;
-    }
+.centered {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  margin-right: -50%;
+  transform: translate(-50%, -50%);
 }
-@-webkit-keyframes shrink,
-@keyframes shrink {
-    from {
-      height: 115px;
-      overflow: hidden;
-    }
-    to {
-      height: 0px;
-      overflow: hidden;
-    }
+.bold {
+  font-weight: bold;
+  font-style: italic;
 }
-@-webkit-keyframes show,
-@keyframes show {
-    from { height: 0px; }
-    to { height: 100px; }
-}
-@-webkit-keyframes fadeOut,
-@keyframes fadeOut {
-    from { opacity: 1; }
-    to { opacity: 0; }
-}
-@-webkit-keyframes fadeIn,
-@keyframes fadeIn {
-    from { opacity: 0; }
-      to { opacity: 1; }
+.loading {
+  padding: 10px;
 }
 
  /*--- Header -----------------*/
 
-.page-header {
-  height: 350px;
-  overflow: hidden;
-}
-.page-header.short {
-  height: 115px;
-  overflow: hidden;
-  -webkit-animation-delay: 0s;
-  -webkit-animation-name: slideUp 0.8s;
-  animation-delay: 0s;
-  animation-name: slideUp 0.8s;
-}
-.page-header .sub1 {
-  opacity: 1;
-}
-.page-header.short .sub1 {
-  /* display: none; */
-  -webkit-animation-delay: 0.5s;
-  -webkit-animation-name: fadeOut 0.8s, shrink 0.8s;
-  animation-delay: 0.5s;
-  animation-name: fadeOut 0.8s, shrink 0.8s;
-}
-.page-header .sub2 {
-  /* display: none; */
-  height: 0;
-  opacity: 0;
-}
-.page-header.short .sub2 {
-  /* display: block; */
-  height: 100px;
-  opacity: 1;
-  -webkit-animation-delay: 0s;
-  -webkit-animation-name: fadeIn 0.8, show 0.8s;
-  animation-delay: 0s;
-  animation-name: fadeIn 0.8, show 0.8s;
-}
-.page-header .sub1 a,
-.page-header .sub2 a {
+.page-header .sub1 a {
   color: lightgrey;
 }
 .page-header .sub1 a:hover,
-.page-header .sub2 a:hover {
+.page-header .btnInfo:hover path {
   text-decoration: none;
   color: #fff;
+  fill: #fff;
   text-shadow:
     -1px -1px 0 #00f,
     1px -1px 0 #00f,
     -1px 1px 0 #00f,
     1px 1px 0 #00f;
 }
-
-
- /* --- Query --- */
-
-.query.left {
-  padding-right: 30px;
+.btnInfo,
+.btnGitHub {
+  vertical-align: bottom;
+  padding: 0 !important;
+  width: 58px !important;
+  height: 50px !important;
 }
+.btnGitHub img {
+  margin-top: 20%;
+}
+
+ /* --- Info Dialog --- */
+
+.infoDialogContents ul {
+  list-style: none;
+  text-align: left;
+}
+.infoDialogContents ul li {
+  margin-left: 20px;
+}
+.infoDialogContents  {
+  text-align: left;
+}
+
+ /* --- Fields Dialog --- */
+
+.fieldsDialog .row:hover {
+  cursor: pointer;
+  color: orange;
+  background-color: rgba(176, 196, 222, 0.31);
+}
+
+.fieldsDialog .selected {
+  color: #62CE2B;
+}
+
+/* --- Query --- */
+
 .query h2 {
   text-align: center;
-}
-
-.left h1, .left h2 {
-  margin-left: 45px;
 }
 .query-tab {
   text-transform: uppercase;
@@ -124,58 +90,94 @@ body {
 .query-tab:hover {
   background-color: rgba(137, 255, 60, 0.15);
 }
-.mega-octicon.super-octicon {
-  font-size: 48px;
-  marign-top: -20px;
-  margin-left: -10px;
-}
 
+/* -- Search Summary--- */
 
-.btnAdd {
-  padding: 0 !important;
-  margin: 20px 0 0 0 !important;
-  z-index: 5;
+.summary h2, .summary h3 {
+  margin-bottom: 0 !important;
 }
-.btnAdd:hover {
-  background-color: rgba(137, 255, 60, 0.15) !important;
+.summary-block {
+  overflow: scroll;
+  position: relative;
+  min-height: 80px;
+  max-height: 80px;
+  border: 1px solid #62CE2B;
+  color: #62CE2B;
 }
-.btnAdd span {
-  color: rgba(0, 0, 0, 0.4);
+.summary-block.active,
+.summary-block:not(.inactive):hover {
+  background-color: rgba(98,206,43,0.1);
+  cursor: pointer;
 }
-.btnSubmit {
-  margin-top: 30px !important;
-  margin-left: 30% !important;
+.summary-block p {
+  font-size: xx-large;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  margin-right: -50%;
+  transform: translate(-50%, -50%);
+}
+.summary .inactive {
+  background-color: rgba(211, 211, 211, 0.3);
+}
+.summary .details {
+  font-size: small;
+  font-family: 'Courier New', Courier, 'Lucida Sans Typewriter', 'Lucida Typewriter', monospace;
+  color: grey;
+  line-height: 12px;
 }
 
 /* -- Search --- */
 
-.searchInputField {
-  margin-bottom: 10px;
+.query .searchInputFields {
+  margin: 20px 0px 10px 0px !important;
 }
-.searchInputField span {
-  margin-right: 5px;
-}
-.searchInputField .expandus,
-.searchInputField .minus {
-  float:right;
-  clear:both;
-}
-.searchInputField .minus:hover path{
+.query .searchInputFields .del:hover path{
   cursor: pointer;
   fill: rgba(189, 8, 8, 0.87);
 }
-.searchField svg {
+.query .searchField svg {
   fill: #9C9A9A !important;
 }
-.searchField .selectFieldButton {
-  float: left;
-  margin-top: 5px;
-  margin-right: -20px;
+.query .qSearch,
+.query .fSearch {
+  margin-top: 30px;
+  border: 1px dotted #62ce2b;
+  padding: 25px;
+  border-radius: 10px;
+}
+.query .search-notes {
+  font-size: smaller;
+  margin-top: 30px;
+  border: 1px dotted lightgrey;
+  padding: 15px;
+  border-radius: 10px;
+  background-color: rgba(211,211,211,0.2);
+}
+.query .search-notes pre p {
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
 }
 
+.query .fSearch .btnSubmit,
+.query .qSearch .btnSubmit,
+.query .fSearch .btnClear,
+.query .qSearch .btnClear {
+  float: right;
+}
 
+.query .or {
+  font-size: larger;
+  color: grey;
+  background-color: white;
+  width: 80px;
+  text-align: center;
+  z-index: 2;
+  position: absolute;
+  top: -15px;
+}
 
-/* -- Find Many --- */
+/* -- Batch / Find Many --- */
 
 .findInputField {
   display: flex;
@@ -194,8 +196,25 @@ body {
   fill: rgba(189, 8, 8, 0.87);
 }
 
-/* -- Examples --- */
-.itemSecondaryTitle {
+.scopefields svg.del {
+  top: 25% !important;
+  padding: 0px !important;
+  right: 27px !important;
+  fill: #9C9A9A !important;
+}
+.scopefields svg.del:hover path {
+  cursor: pointer;
+  fill: rgba(189, 8, 8, 0.87);
+}
+
+
+ /*--- Examples -----------------*/
+
+.examples .chevron-right {
+  height: inherit !important;
+  width: inherit !important;
+}
+.examples .itemSecondaryTitle {
   font-size: 14px;
   line-height: 18px;
   margin: 0;
@@ -205,12 +224,43 @@ body {
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
 }
-.itemSecondaryTitle.title1 {
+.examples .itemSecondaryTitle.title1 {
   color: rgba(0, 0, 0, 0.87);
   margin-top: 4px;
 }
-.itemSecondaryTitle.title2 {
+.examples .itemSecondaryTitle.title2 {
   color: rgba(0, 0, 0, 0.54);
+}
+
+
+
+ /*--- Output Fields -----------------*/
+
+.output h2, .outputFields h3 {
+  margin-bottom: 0 !important;
+}
+.output .outputButtons {
+  margin-top: 20px;
+  margin-bottom: 16px;
+  padding-left: 25%;
+}
+.output .btnSubmit,
+.output .btnClear {
+  float: right;
+}
+.outputFields svg.del {
+  top: 25% !important;
+  padding: 0px !important;
+  right: 27px !important;
+  fill: #9C9A9A !important;
+}
+.outputFields svg.del:hover path {
+  cursor: pointer;
+  fill: rgba(189, 8, 8, 0.87);
+}
+.output .left,
+.output .right {
+  margin-top: 1.5em !important;
 }
 
 
@@ -228,20 +278,18 @@ svg.faded-grey path {
 .action-buttons > div:last-child {
   margin-right: 0px;
 }
-.result.right {
-  padding-left: 30px;
-}
-.result h2 {
-  text-align: center;
-}
 .results {
+  margin-top: 25px;
+}
+.result h2, .result h3 {
+  text-align: center;
+  margin-bottom: 0 !important;
+}
+.preview {
   padding: 15px;
   border-radius: 10px;
   margin-top: 15px;
   border: 1px solid lightgrey;
-}
-.loading {
-  padding: 10px;
 }
 .code-view {
   max-height: 500px;
