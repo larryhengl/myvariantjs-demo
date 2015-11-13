@@ -4,7 +4,7 @@ const React = require('react');
 const ReactDOM = require('react-dom');
 const flat = require('flat');
 const mui = require('material-ui');
-const mv = require('myvariantjs');
+const mv = require('myvariantjs').default;
 const utils = require('../utils');
 const mixins = require('baobab-react/mixins');
 const Query = require('./Query.jsx');
@@ -159,7 +159,7 @@ const Main = React.createClass({
 
 
                   <h3>Tools</h3>
-                  <ul className="infoList">It incorparates some of the latest JS technologies:
+                  <ul className="infoList">This app incorparates some of the latest JS technologies:
                     <li><span className="bold">React</span> - framework.</li>
                     <li><span className="bold">Material UI</span> - design.</li>
                     <li><span className="bold">Baobab</span> - state tree.</li>

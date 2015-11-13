@@ -65,8 +65,8 @@ const FieldList = React.createClass({
   },
 
   componentDidUpdate(){
-    if (this.state.showFieldList) this.refs.fieldsDialog.show();
-    else this._clearFilter();
+    if (!this.state.showFieldList) this._clearFilter();
+    //this.refs.fieldsDialog.show();
   },
 
   _clearFilter(){
@@ -92,7 +92,6 @@ const FieldList = React.createClass({
   },
 
   render() {
-    const self = this;
 
     const dotSpaces = (dots) => {
       let arr = [];
@@ -102,11 +101,11 @@ const FieldList = React.createClass({
       return arr;
     }
 
-    const prettyRows = this.state.filteredData.map(function(f,i) {
+    const prettyRows = this.state.filteredData.map((f,i) => {
       let dots = f.fieldname.split(".").length - 1;
-      let isSelected = self.state.activeFields.indexOf(f.fieldname) > -1; // is it in the mapped set?
+      let isSelected = this.state.activeFields.indexOf(f.fieldname) > -1; // is it in the mapped set?
       return (
-          <div key={"field"+i} className={"row"+(isSelected ? " selected" : "")} onClick={self._selectField.bind(null,{idx: i, name: f.fieldname})} >
+          <div key={"field"+i} className={"row"+(isSelected ? " selected" : "")} onClick={this._selectField.bind(null,{idx: i, name: f.fieldname})} >
             <div className="col-xs-11 col-sm-11 col-md-11 col-lg-11 col-xs-offset-1 col-sm-offset-1 col-md-offset-1 col-lg-offset-1">
               <span>{dotSpaces(dots)}{ dots > 0 && <span><MoreVertIcon/><MoreHorizIcon style={{marginBottom: '-7px',marginLeft: '-10px'}}/></span>}<span title={f.notes}>{f.fieldname}</span></span>
             </div>
@@ -133,12 +132,13 @@ const FieldList = React.createClass({
                 placeholder="Search" />
             </div>
           }
+          open={this.state.showFieldList}
           actions={[{ text: 'Done' }]}
           autoDetectWindowHeight={true}
           autoScrollBodyContent={true}
-          onDismiss={this.actions.toggleFieldList}
+          onRequestClose={this.actions.toggleFieldList}
           modal={true}>
-          <div className="fieldsDialog" style={{height: '1000px'}}>
+          <div className="fieldsDialog">
             { prettyRows }
           </div>
         </Dialog>

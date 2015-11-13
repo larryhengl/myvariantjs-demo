@@ -2,7 +2,7 @@
 
 const React = require('react');
 const mui = require('material-ui');
-const mv = require('myvariantjs');
+//const mv = require('myvariantjs').default;
 const utils = require('../utils');
 const mixins = require('baobab-react/mixins');
 
@@ -29,7 +29,7 @@ const Inputs = React.createClass({
 
     // -------------------- RENDER --------------------------------------- //
     return (
-      <div className={(this.state.tab==="input" ? "input query" : "hidey")}>
+      <div className={(this.state.tab==="input" ? "query" : "hidey")}>
         <InputExact />
         <InputSearch />
         <InputBatch />

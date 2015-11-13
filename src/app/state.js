@@ -13,7 +13,7 @@ const tree = {
   showFieldList: false,
   fieldCursor: null,
   activeTabs: {
-    Main: 'examples',
+    Main: 'exact',
     Query: 'input',
   },
   dataFormat: 'table',

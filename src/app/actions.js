@@ -1,6 +1,6 @@
 
 const utils = require('./utils.js');
-const mv = require('myvariantjs');
+const mv = require('myvariantjs').default;
 const flat = require('flat');
 
 export function setWatchers(tree) {
@@ -56,7 +56,11 @@ export function addField(tree, field) {
         tree.select('fieldCursor').set(null);
       }
     } else if (main === 'batch') {
-      if (AQ.get('scope').indexOf(field.name) === -1) AQ.select('scope').push(field.name);
+      if (!AQ.get('scope')) {
+        AQ.select('scope').set([field.name]);
+      } else {
+        if (AQ.get('scope').indexOf(field.name) === -1) AQ.select('scope').push(field.name);
+      }
     }
   }
 };
@@ -78,9 +82,10 @@ export function removeField(tree, field) {
     }
   } else if (query === 'input') {
     if (main === 'search') {
-      AQ.select('input').splice(field.idx,[1,1]);
+      AQ.select('input').splice(field.idx,[0,1]);
     } else if (main === 'batch') {
-      if (AQ.get('scope').indexOf(field.name) !== -1) AQ.select('scope').splice(field.name,[1,1]);
+      let idx = AQ.get('scope').indexOf(field);
+      if (idx !== -1) AQ.select('scope').splice([idx,1]);
     }
   }
 };
@@ -175,17 +180,17 @@ export function fetchData(tree,exampleN) {
 };
 
 export function formatRequest(tree, searchType) {
-  const self = this;
-  //const cur = tree.select('query',searchType);
   const cur = tree.select('activeQuery');
+  let caller = searchType;
   let arr = [];
   let q;
   if (searchType === 'search') {
-    q = cur.get('input').map(f => f.name+':'+f.value).join(' AND ');
+    q = cur.get('input').filter(f => f.name).map(f => f.name+':'+f.value).join(' AND ');
   } else if (searchType === 'search.q') {
     q = cur.get('q');
   } else {
     q = cur.get('input');
+    if (q.indexOf(',') > -1) caller = 'exact.many';
   }
 
   // attach the output args if any
@@ -198,13 +203,14 @@ export function formatRequest(tree, searchType) {
 
   // set caller.  these reference the respective methods in the myvariantjs API.
   //  note: the example calls are intercepted and parsed in the fetchData method above.
-  const caller = {
+  const calls = {
     'exact': 'getvariant',
+    'exact.many': 'getvariants',
     'search': 'query',
     'search.q': 'query',
     'batch': 'querymany',
     'passthru': 'passthru',
   };
 
-  return {'caller':caller[searchType],'params':[q,opts]};
+  return {'caller':calls[caller],'params':[q,opts]};
 };

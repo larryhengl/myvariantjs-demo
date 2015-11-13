@@ -46,10 +46,9 @@ const ExactInput = React.createClass({
   },
 
   render() {
-    const self = this;
     const input = [];
 
-    if (self.state.tabs.Main==="exact" && self.state.tabs.Query==="input") {
+    if (this.state.tabs.Main==="exact" && this.state.tabs.Query==="input") {
       // construct the input component contents
       input.push(
         <div key={"inputall"}>
@@ -62,8 +61,8 @@ const ExactInput = React.createClass({
                     <h3>Simple Search</h3>
                   </div>
                   <div className='col-xs-8 col-sm-8 col-md-8 col-lg-8'>
-                    <FlatButton ref="btnClear" className="btnClear" label="Clear" secondary={true} onTouchTap={self.actions.clearInput.bind(null,'exact')} />
-                    <FlatButton ref="btnSubmit" className="btnSubmit" label="Submit" secondary={true} onTouchTap={self._handleSubmit.bind(null,'exact')} />
+                    <FlatButton ref="btnClear" className="btnClear" label="Clear" secondary={true} onTouchTap={this.actions.clearInput.bind(null,'exact')} />
+                    <FlatButton ref="btnSubmit" className="btnSubmit" label="Submit" secondary={true} onTouchTap={this._handleSubmit.bind(null,'exact')} />
                   </div>
                 </div>
 
@@ -72,8 +71,8 @@ const ExactInput = React.createClass({
                   hintText="Search"
                   floatingLabelText="Enter HGVS VariantIDs"
                   fullWidth={true}
-                  onChange={self._handleInputChange}
-                  value={self.state.input} />
+                  onChange={this._handleInputChange}
+                  value={this.state.input} />
               </div>
             </CardText>
 
@@ -97,7 +96,7 @@ const ExactInput = React.createClass({
 
 
     return (
-      <div className={(self.state.tabs.Query==="input" ? "input" : "hidey")} >
+      <div className={(this.state.tabs.Query==="input" ? "exact input" : "hidey")} >
        {input}
       </div>
     )

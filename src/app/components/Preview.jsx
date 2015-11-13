@@ -5,7 +5,7 @@ const flat = require('flat');
 const React = require('react');
 const mixins = require('baobab-react/mixins');
 const mui = require('material-ui');
-const mv = require('myvariantjs');
+//const mv = require('myvariantjs').default;
 const utils = require('../utils');
 
 const FlatButton = mui.FlatButton;

@@ -44,6 +44,8 @@ const Outputs = React.createClass({
     removeField: actions.removeField,
     toggleFieldList: actions.toggleFieldList,
     copyOutput: actions.copyOutput,
+    formatRequest: actions.formatRequest,
+    fetchData: actions.fetchData,
   },
 
   cursors: {
@@ -133,6 +135,13 @@ const Outputs = React.createClass({
           </div>
 
           <div className="right col-xs-4 col-sm-4 col-md-4 col-lg-4">
+            <div className="row">
+              <div className="outputButtons">
+                <FlatButton ref="btnClear" className="btnClear" label="Clear" secondary={true} onTouchTap={self._copyOutput.bind(null,'defaults')} />
+                <FlatButton ref="btnSubmit" className="btnSubmit" label="Submit" secondary={true} onTouchTap={self._handleSubmit.bind(null, this.state.tabs.Main)} />
+              </div>
+            </div>
+
             <Paper style={{padding: '20px'}}>
               <p>Copy Output Settings From...</p>
               <RadioButtonGroup
@@ -171,11 +180,6 @@ const Outputs = React.createClass({
                 fullWidth={true}
                 value={this.state.activeQuery.output.from}
                 onChange={this._handleFromChange} />
-
-              <div className='row outputButtons'>
-                <FlatButton ref="btnSubmit" className="btnSubmit col-xs-6 col-sm-6 col-md-6 col-lg-6" label="Re-Submit Search" secondary={true} onTouchTap={self._handleSubmit.bind(null, this.state.tabs.Main)} />
-                <FlatButton ref="btnReset" className="btnReset col-xs-6 col-sm-6 col-md-6 col-lg-6" label="Reset" secondary={true} onTouchTap={self._copyOutput.bind(null,'defaults')} />
-              </div>
 
             </Paper>
           </div>

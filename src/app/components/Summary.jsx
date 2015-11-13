@@ -83,7 +83,7 @@ const Summary = React.createClass({
     // summarize results
     let result = [];
     if (this.state.isLoading) {
-      result.push(<CircularProgress color={this.state.colors.green} style={{marginLeft: '40%'}} mode="indeterminate" size={0.75} />);
+      result.push(<CircularProgress color={this.state.colors.green} style={{marginLeft: '40%'}} mode="indeterminate" size={0.5} />);
     } else {
       if (this.state.activeQuery.results && this.state.activeQuery.results.length) {
         result.push(

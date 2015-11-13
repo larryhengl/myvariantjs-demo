@@ -52,6 +52,7 @@ body {
 }
 
  /* --- Info Dialog --- */
+
 .infoDialogContents ul {
   list-style: none;
   text-align: left;
@@ -59,7 +60,23 @@ body {
 .infoDialogContents ul li {
   margin-left: 20px;
 }
- /* --- Query --- */
+.infoDialogContents  {
+  text-align: left;
+}
+
+ /* --- Fields Dialog --- */
+
+.fieldsDialog .row:hover {
+  cursor: pointer;
+  color: orange;
+  background-color: rgba(176, 196, 222, 0.31);
+}
+
+.fieldsDialog .selected {
+  color: #62CE2B;
+}
+
+/* --- Query --- */
 
 .query h2 {
   text-align: center;
@@ -80,8 +97,10 @@ body {
   margin-bottom: 0 !important;
 }
 .summary-block {
+  overflow: scroll;
   position: relative;
   min-height: 80px;
+  max-height: 80px;
   border: 1px solid #62CE2B;
   color: #62CE2B;
 }
@@ -177,6 +196,17 @@ body {
   fill: rgba(189, 8, 8, 0.87);
 }
 
+.scopefields svg.del {
+  top: 25% !important;
+  padding: 0px !important;
+  right: 27px !important;
+  fill: #9C9A9A !important;
+}
+.scopefields svg.del:hover path {
+  cursor: pointer;
+  fill: rgba(189, 8, 8, 0.87);
+}
+
 
  /*--- Examples -----------------*/
 
@@ -205,22 +235,19 @@ body {
 
 
  /*--- Output Fields -----------------*/
+
 .output h2, .outputFields h3 {
   margin-bottom: 0 !important;
 }
 .output .outputButtons {
   margin-top: 20px;
+  margin-bottom: 16px;
+  padding-left: 25%;
 }
-.fieldsDialog .row:hover {
-  cursor: pointer;
-  color: orange;
-  background-color: rgba(176, 196, 222, 0.31);
+.output .btnSubmit,
+.output .btnClear {
+  float: right;
 }
-
-.fieldsDialog .selected {
-  color: #62CE2B;
-}
-
 .outputFields svg.del {
   top: 25% !important;
   padding: 0px !important;
@@ -231,7 +258,6 @@ body {
   cursor: pointer;
   fill: rgba(189, 8, 8, 0.87);
 }
-
 .output .left,
 .output .right {
   margin-top: 1.5em !important;
@@ -252,7 +278,6 @@ svg.faded-grey path {
 .action-buttons > div:last-child {
   margin-right: 0px;
 }
-
 .results {
   margin-top: 25px;
 }
