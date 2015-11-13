@@ -90,8 +90,8 @@ const BatchInput = React.createClass({
 
                 <TextField
                   ref={'passthruTerm'}
-                  hintText="URL"
-                  floatingLabelText="Enter an URL"
+                  hintText="CSV Terms"
+                  floatingLabelText="Enter terms as comma-separated"
                   fullWidth={true}
                   onChange={this._handleInputChange}
                   value={this.state.input} />
@@ -125,7 +125,8 @@ const BatchInput = React.createClass({
                 <p>For Batch searches, you enter comma-saparated terms.</p>
                 <p>You can optionally add fields to limit the search to.</p>
                 <pre>
-                  <p></p>
+                  <p>q=rs58991260,rs2500</p>
+                  <p>scopes=dbsnp.rsid</p>
                 </pre>
               </div>
             </CardText>

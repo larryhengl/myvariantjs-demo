@@ -117,10 +117,6 @@ export function removeSearchField(tree,idx) {
 };
 
 
-export function removeInput(tree, field) {
-  // can remove fielded inputs
-};
-
 export function clearInput(tree, source) {
   // can remove all input fields and values
   if (source === 'search') {
@@ -130,11 +126,6 @@ export function clearInput(tree, source) {
   } else {
     tree.select('query',source,'input').set(null);
   }
-
-};
-
-export function clearOutput(tree) {
-  // can remove all output fields
 };
 
 
