@@ -49,6 +49,7 @@ const Outputs = React.createClass({
   },
 
   cursors: {
+    isPublic: ['isPublic'],
     tabs: ['activeTabs'],
     activeQuery: ['activeQuery'],
     query: ['query'],
@@ -165,7 +166,7 @@ const Outputs = React.createClass({
 
             <Paper style={{padding: '20px'}}>
               <SelectField
-                disabled={true}
+                disabled={this.state.isPublic}
                 ref="selectSize"
                 value={this.state.activeQuery.output.size}
                 onChange={this._handleSizeChange}
@@ -175,7 +176,7 @@ const Outputs = React.createClass({
                 displayMember="name"
                 menuItems={this.state.sizes} />
 
-              <span style={{fontSize:'x-small',fontStyle:'italic'}}>* disabled for public github release. remove the disabled prop when hosted locally.</span>
+              <span style={{fontSize:'x-small',fontStyle:'italic'}}>* disabled for public github release.</span>
 
               <TextField
                 hintText="Assign Page Size Offset (optional)"

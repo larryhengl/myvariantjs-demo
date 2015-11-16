@@ -3,6 +3,7 @@ let monkey = Baobab.monkey;
 let utils = require('./utils.js');
 
 const tree = {
+  isPublic: true,    // set this to false if hosting internally
   isLoading: false,
   colors: {
     white: "#FFFFFF",
