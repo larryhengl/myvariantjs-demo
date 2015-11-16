@@ -24,13 +24,13 @@ open browser to [http://localhost:3000/](http://localhost:3000/)
 
 #### What are you looking at?
 
-This web app uses the myvariantjs lib to talk to the MyVariant.info services.  You can issue `search` queries, `filters` or `example` calls.  Hit the `info` button in the top right for full details, but in a nutshell you can run searches in several ways:
+This web app uses the myvariantjs lib to talk to the MyVariant.info services.  Hit the `info` button in the top right corner of the app for full details, but in a nutshell you can run searches in several ways:
 
-*exact* - for when you are searching on a specific variant id.
-*search* - for doing fielded searches.
-*batch* - for doing multi-term searches on scoped fields.
-*pass-thru* - for submitting a full search URL.
-*examples* - for running predefined searches.
++ *exact* - for when you are searching on a specific variant id.
++ *search* - for doing fielded searches.
++ *batch* - for doing multi-term searches on scoped fields.
++ *pass-thru* - for submitting a full search URL.
++ *examples* - for running predefined searches.
 
 The results box shows a sampling of the actual results.
 
@@ -46,7 +46,7 @@ See package.json for all the npm run scripts
 
 ## Ingredients
 
-This app uses Reactjs, styled with Material UI.
+This Nodejs app uses Reactjs, styled with Material UI.
 
 It is built with gulp & babel.
 
