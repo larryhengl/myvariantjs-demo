@@ -167,6 +167,20 @@ const SearchInput = React.createClass({
             <CardText>
               <div className="search-notes">
                <h3>Notes</h3>
+                <p>Range queries</p>
+                <pre>
+                  <p>dbnsfp.polyphen2.hdiv.score:>0.99</p>
+                  <p>dbnsfp.polyphen2.hdiv.score:>=0.99</p>
+                  <p>exac.af:&lt;0.00001</p>
+                  <p>exac.af:&lt;=0.00001</p>
+                  <p>exac.ac.ac_adj:[76640 TO 80000]        // bounded (including 76640 and 80000)</p>
+                  <p>exac.ac.ac_adj:{'{76640 TO 80000}'}    // unbounded</p>
+                </pre>
+                <p>The combination of “size” and “from” parameters can be used to get paging for large queries:</p>
+                <pre>
+                  <p>q=cdk*&size=50                    // first 50 hits</p>
+                  <p>q=cdk*&size=50&from=50            // the next 50 hits</p>
+                </pre>
                 <p>Wildcard character “*” or ”?” is supported in either simple queries or fielded queries:</p>
                 <pre>
                   <p>dbnsfp.genename:CDK?</p>

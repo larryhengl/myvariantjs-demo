@@ -137,7 +137,7 @@ const BatchInput = React.createClass({
 
 
     return (
-      <div className={(this.state.tabs.Query==="input" ? "passthru input" : "hidey")} >
+      <div className={(this.state.tabs.Query==="input" ? "batch input" : "hidey")} >
        {input}
       </div>
     )

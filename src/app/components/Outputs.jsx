@@ -165,14 +165,17 @@ const Outputs = React.createClass({
 
             <Paper style={{padding: '20px'}}>
               <SelectField
+                disabled={true}
                 ref="selectSize"
                 value={this.state.activeQuery.output.size}
                 onChange={this._handleSizeChange}
-                floatingLabelText="Select Row Batch Size"
+                floatingLabelText="Select Row Batch Size*"
                 fullWidth={true}
                 valueMember="value"
                 displayMember="name"
                 menuItems={this.state.sizes} />
+
+              <span style={{fontSize:'x-small',fontStyle:'italic'}}>* disabled for public github release. remove the disabled prop when hosted locally.</span>
 
               <TextField
                 hintText="Assign Page Size Offset (optional)"
